@@ -36,6 +36,7 @@ _BYU-Pathway Worldwide improves lives through access to spiritually based, onlin
 - Kristin Lind  
 - Amanda Wessman  
 - Stanley Uchechukwu Ferdinand  
+- Bankole Ebenezer o
 
 ---
 Practice branch update by Kristin.
