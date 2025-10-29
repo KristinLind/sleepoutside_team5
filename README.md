@@ -32,11 +32,11 @@ _BYU-Pathway Worldwide improves lives through access to spiritually based, onlin
 
 ---
 
-### 👥 Team Members  
+### 👥 Team Members (Sleep Outside – Team 5)
 - Kristin Lind  
 - Amanda Wessman  
 - Stanley Uchechukwu Ferdinand  
-- Bankole Ebenezer o
+- Ebenezer Oladipupo Bankole
 
 ---
 Practice branch update by Kristin.
