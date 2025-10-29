@@ -22,6 +22,19 @@
 
 ---
 _BYU-Pathway Worldwide improves lives through access to spiritually based, online affordable higher education. Its mission is to develop disciples of Jesus Christ who are leaders in their homes, the Church, and their communities._
+## 🌐 Live Site  
+[View Sleep Outside on Netlify](https://sleepoutside-team5.netlify.app)
 
+---
 
+### 🗂 Trello Board  
+[Sleep Outside Team 5 – Trello Board](https://trello.com/invite/b/690109112ad3d019b1ea0dd3/ATTIc5b758097f3c905bba169b957b5ee46e87F2A02C/sleep-outside-team-5)
 
+---
+
+### 👥 Team Members  
+- Kristin Lind  
+- Amanda Wessman  
+- Stanley Uchechukwu Ferdinand  
+
+---
