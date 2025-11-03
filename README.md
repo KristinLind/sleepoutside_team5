@@ -38,6 +38,7 @@ _BYU-Pathway Worldwide improves lives through access to spiritually based, onlin
 - Stanley Uchechukwu Ferdinand  
 - Ebenezer Oladipupo Bankole  
 - Victor Aderibigbe
+- Immanuel Njibie
 
 
 ---
@@ -45,7 +46,7 @@ _BYU-Pathway Worldwide improves lives through access to spiritually based, onlin
 
 ---
 
-- Ebenezer Oladipupo Bankole
+
 
 ---
 
