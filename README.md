@@ -32,8 +32,6 @@ _BYU-Pathway Worldwide improves lives through access to spiritually based, onlin
 
 ---
 
----
-
 ### 👥 Team Members (Sleep Outside – Team 5)
 - Kristin Lind  
 - Amanda Wessman  
@@ -44,6 +42,10 @@ _BYU-Pathway Worldwide improves lives through access to spiritually based, onlin
 
 ---
 
+
+---
+
+- Ebenezer Oladipupo Bankole
 
 ---
 
