@@ -39,9 +39,11 @@ _BYU-Pathway Worldwide improves lives through access to spiritually based, onlin
 - Amanda Wessman  
 - Stanley Uchechukwu Ferdinand  
 - Ebenezer Oladipupo Bankole  
+- Victor Aderibigbe
+
 
 ---
 
 
 ---
-Practice branch update by Kristin.
+
