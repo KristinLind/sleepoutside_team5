@@ -50,9 +50,22 @@
   </header>
 
       <!-- DYNAMIC TARGET: JS will render the product details here -->
-      <main id="product-detail" class="divider product-detail">
-        <div class="loading">Loading product…</div>
-      </main>
+<main id="product-detail" class="divider product-detail">
+  <section class="product-detail">
+    <h3 id="brand"></h3>
+    <h2 id="title" class="divider"></h2>
+
+    <img id="productImage" class="divider" src="" alt="" />
+
+    <p id="productPrice" class="product-card__price"></p>
+    <p id="productColor" class="product__color"></p>
+    <p id="productDesc" class="product__description"></p>
+
+    <div class="product-detail__add">
+      <button id="addToCart" data-id="">Add to Cart</button>
+    </div>
+  </section>
+</main>
 
   <footer>&copy;NOT a real business</footer>
 </body>

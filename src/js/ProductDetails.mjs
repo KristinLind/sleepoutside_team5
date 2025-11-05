@@ -1,101 +1,79 @@
-import { setLocalStorage } from './utils.mjs';
-
-function formatPrice(value) {
-  const n = Number(value);
-  return Number.isFinite(n) ? `$${n.toFixed(2)}` : '$—';
-}
-
-function normalizeProduct(raw) {
-  if (!raw) return null;
-  return {
-    id: raw.Id ?? raw.id ?? raw.sku,
-    brand: raw.Brand ?? raw.brand ?? '',
-    name: raw.Name ?? raw.title ?? '',
-    image: raw.Image ?? raw.image ?? raw.Images?.[0] ?? '',
-    price: raw.FinalPrice ?? raw.SuggestedRetailPrice ?? raw.Price ?? raw.price,
-    color: raw.Color ?? raw.color ?? '',
-    description: raw.Description ?? raw.description ?? '',
-    stock: raw.Stock ?? raw.stock ?? null,
-  };
-}
-
-function productDetailTemplate(p) {
-  return `
-    <section class="product-detail">
-      ${p.brand ? `<h3>${p.brand}</h3>` : ''}
-      <h2 class="divider">${p.name}</h2>
-      ${p.image ? `<img class="divider" src="${p.image}" alt="${p.name}" loading="lazy">` : ''}
-      <p class="product-card__price">${formatPrice(p.price)}</p>
-      ${p.color ? `<p class="product__color">${p.color}</p>` : ''}
-      ${p.description ? `<p class="product__description">${p.description}</p>` : ''}
-      <div class="product-detail__add">
-        <button id="addToCart" data-id="${p.id}">Add to Cart</button>
-      </div>
-    </section>
-  `;
-}
+import { getLocalStorage, setLocalStorage } from './utils.mjs';
 
 export default class ProductDetails {
-  constructor(productId, dataSource, cartKey = 'so-cart') {
+  constructor(productId, dataSource) {
     this.productId = productId;
+    this.product = {};
     this.dataSource = dataSource;
-    this.cartKey = cartKey;
-    this.root = document.getElementById('product-detail');
-    this.product = null;
-    this.raw = null;
   }
 
   async init() {
-    try {
-      this.raw = await this.dataSource.findProductById(this.productId);
-      if (!this.raw) {
-        this.renderError(`No product found for id "${this.productId}".`);
-        return;
-      }
-      this.product = normalizeProduct(this.raw);
-      this.renderProductDetails();
-
-      const btn = document.getElementById('addToCart');
-      if (btn) btn.addEventListener('click', this.addProductToCart.bind(this));
-    } catch (err) {
-      console.error(err);
-      this.renderError('There was a problem loading this product.');
+    // 1) fetch product
+    this.product = await this.dataSource.findProductById(this.productId);
+    if (!this.product) {
+      this.renderError(`No product found for id "${this.productId}"`);
+      return;
     }
+
+    // 2) render into the page
+    this.renderProductDetails();
+
+    // 3) add-to-cart handler (bind 'this')
+    document
+      .getElementById('addToCart')
+      .addEventListener('click', this.addProductToCart.bind(this));
   }
 
   addProductToCart() {
-    const cart = JSON.parse(localStorage.getItem(this.cartKey) || '[]');
-    cart.push({
-      Id: this.product.id,
-      Name: this.product.name,
-      Brand: this.product.brand,
-      Image: this.product.image,
-      FinalPrice: this.product.price,
-    });
-    setLocalStorage(this.cartKey, cart);
-
-    const btn = document.getElementById('addToCart');
-    if (btn) {
-      const old = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = 'Added!';
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.textContent = old;
-      }, 1000);
-    }
+    const cartItems = getLocalStorage('so-cart') || [];
+    cartItems.push(this.product); // keep it simple this week
+    setLocalStorage('so-cart', cartItems);
   }
 
   renderProductDetails() {
-    this.root.innerHTML = productDetailTemplate(this.product);
+    productDetailsTemplate(this.product);
   }
 
-  renderError(message) {
-    this.root.innerHTML = `
-      <div class="product-error">
-        <p>${message}</p>
-        <p><a href="../index.html">Back to products</a></p>
-      </div>
-    `;
+  renderError(msg) {
+    const main = document.getElementById('product-detail') || document.querySelector('main');
+    if (main) main.innerHTML = `<p class="product-error">${msg}</p>`;
+    console.error(msg);
   }
+}
+function productDetailsTemplate(product) {
+  const brand = product.Brand?.Name ?? product.Brand ?? '';
+  const title = product.NameWithoutBrand ?? product.Name ?? '';
+  const img = product.Image ?? '';
+  const price = product.FinalPrice ?? product.SuggestedRetailPrice ?? product.Price ?? '';
+  const color = product.Colors?.[0]?.ColorName ?? product.Color ?? '';
+  const descHtml = product.DescriptionHtmlSimple ?? product.Description ?? '';
+  // brand/title
+  const h3 = document.getElementById('brand');
+  const h2 = document.getElementById('title');
+  if (h3) h3.textContent = brand;
+  if (h2) h2.textContent = title;
+
+  // image
+  const productImage = document.getElementById('productImage');
+  if (productImage) {
+    productImage.src = img;
+    productImage.alt = title || brand || 'Product image';
+    productImage.loading = 'lazy';
+  }
+
+  // price/color/desc
+  const priceEl = document.getElementById('productPrice');
+  const colorEl = document.getElementById('productColor');
+  const descEl = document.getElementById('productDesc');
+
+  if (priceEl) {
+    const n = Number(price);
+    priceEl.textContent = Number.isFinite(n) ? `$${n.toFixed(2)}` : (price || '');
+  }
+  if (colorEl) colorEl.textContent = color;
+  if (descEl) descEl.innerHTML = descHtml;
+
+  // add-to-cart needs the id
+  const btn = document.getElementById('addToCart');
+  if (btn) btn.dataset.id = product.Id;
 }
