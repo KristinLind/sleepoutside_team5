@@ -133,6 +133,68 @@ button {
 
 /* End cart icon styles */
 
+/* Cart count badge */
+.cart a.cart-link {
+  position: relative;
+  display: inline-block;
+}
+
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 1.2rem;
+  height: 1.2rem;
+  line-height: 1.2rem;
+  padding: 0 .3rem;
+  border-radius: 999px;
+  background: #c33;
+  color: #fff;
+  font-size: .75rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.cart-count:empty {
+  display: none;
+}
+
+.remove-item {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  background-color: transparent;
+  color: var(--tertiary-color);
+  border: 1px solid var(--light-grey);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.remove-item:hover {
+  background-color: #f7e3d3;
+  border-color: var(--tertiary-color);
+}
+
+.cart a.cart-link {
+  padding: .25rem;
+}
+
+.cart svg {
+  width: 28px;
+  height: 28px;
+}
+
+.cart-count {
+  min-width: 1.2rem;
+  display: inline-block;
+}
+
+.cart-count.hidden {
+  display: none;
+}
+
 .mission {
   position: absolute;
   top: 1rem;
