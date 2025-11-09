@@ -1,4 +1,8 @@
-import { getLocalStorage, setLocalStorage } from './utils.mjs';
+// src/js/ProductDetails.mjs
+import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { updateCartCount } from "./cartCount.mjs";
+
+const CART_KEY = "so-cart";
 
 export default class ProductDetails {
   constructor(productId, dataSource) {
@@ -8,72 +12,59 @@ export default class ProductDetails {
   }
 
   async init() {
-    // 1) fetch product
     this.product = await this.dataSource.findProductById(this.productId);
-    if (!this.product) {
-      this.renderError(`No product found for id "${this.productId}"`);
-      return;
-    }
-
-    // 2) render into the page
     this.renderProductDetails();
-
-    // 3) add-to-cart handler (bind 'this')
-    document
-      .getElementById('addToCart')
-      .addEventListener('click', this.addProductToCart.bind(this));
+    document.getElementById("addToCart")
+      .addEventListener("click", this.addProductToCart.bind(this));
   }
 
   addProductToCart() {
-    const cartItems = getLocalStorage('so-cart') || [];
-    cartItems.push(this.product); // keep it simple this week
-    setLocalStorage('so-cart', cartItems);
+    const cart = getLocalStorage(CART_KEY) || [];
+
+    const item = {
+      Id: this.product.Id,
+      Name: this.product.Name,
+      Price: this.product.FinalPrice ?? this.product.Price ?? 0,
+      Image: String(this.product.Image || "").replace(/^\/+/, ""),
+    
+      Color: this.product?.Colors?.[0]?.ColorName ?? "",
+      Qty: 1
+    };
+
+    const idx = cart.findIndex(p => String(p.Id) === String(item.Id));
+    if (idx >= 0) cart[idx].Qty = (cart[idx].Qty || 1) + 1;
+    else cart.push(item);
+
+    setLocalStorage(CART_KEY, cart);
+    updateCartCount();
   }
 
   renderProductDetails() {
     productDetailsTemplate(this.product);
   }
-
-  renderError(msg) {
-    const main = document.getElementById('product-detail') || document.querySelector('main');
-    if (main) main.innerHTML = `<p class="product-error">${msg}</p>`;
-    console.error(msg);
-  }
 }
+
+// ProductDetails.mjs
 function productDetailsTemplate(product) {
-  const brand = product.Brand?.Name ?? product.Brand ?? '';
-  const title = product.NameWithoutBrand ?? product.Name ?? '';
-  const img = product.Image ?? '';
-  const price = product.FinalPrice ?? product.SuggestedRetailPrice ?? product.Price ?? '';
-  const color = product.Colors?.[0]?.ColorName ?? product.Color ?? '';
-  const descHtml = product.DescriptionHtmlSimple ?? product.Description ?? '';
-  // brand/title
-  const h3 = document.getElementById('brand');
-  const h2 = document.getElementById('title');
-  if (h3) h3.textContent = brand;
-  if (h2) h2.textContent = title;
+  document.getElementById("brand").textContent = product.Brand?.Name ?? "";
+  document.getElementById("title").textContent = product.NameWithoutBrand ?? "";
 
-  // image
-  const productImage = document.getElementById('productImage');
-  if (productImage) {
-    productImage.src = img;
-    productImage.alt = title || brand || 'Product image';
-    productImage.loading = 'lazy';
-  }
+  const img = document.getElementById("productImage");
+  img.src = product.Image;
+  img.alt = product.NameWithoutBrand ?? "";
 
-  // price/color/desc
-  const priceEl = document.getElementById('productPrice');
-  const colorEl = document.getElementById('productColor');
-  const descEl = document.getElementById('productDesc');
+  document.getElementById("productPrice").textContent =
+    `$${product.FinalPrice ?? product.Price ?? 0}`;
 
-  if (priceEl) {
-    const n = Number(price);
-    priceEl.textContent = Number.isFinite(n) ? `$${n.toFixed(2)}` : (price || '');
-  }
-  if (colorEl) colorEl.textContent = color;
-  if (descEl) descEl.innerHTML = descHtml;
+  document.getElementById("productColor").textContent =
+    product?.Colors?.[0]?.ColorName ?? "";
 
-  // add-to-cart needs the id
-  const btn = document.getElementById('addToCart');
-  if (btn) btn.dataset.id = product.Id;
+  document.getElementById("productDesc").innerHTML =
+    product.DescriptionHtmlSimple ?? "";
+
+  document.getElementById("addToCart").dataset.id = product.Id;
 }
+
+
+
+

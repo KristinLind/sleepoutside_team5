@@ -1,23 +1,24 @@
+// /src/js/ProductData.mjs
 function convertToJson(res) {
-  if (res.ok) {
-    return res.json();
-  } else {
-    throw new Error("Bad Response");
-  }
+  if (res.ok) return res.json();
+  throw new Error("Bad Response");
 }
 
 export default class ProductData {
-  constructor(category) {
-    this.category = category;
-    this.path = `../json/${this.category}.json`;
+  constructor(category = "tents") {
+    this.category = category || "tents";
+
+    const base = location.pathname.includes("/product_pages/") ? ".." : ".";
+    this.path = `${base}/json/${this.category}.json`; 
   }
+
   getData() {
-    return fetch(this.path)
-      .then(convertToJson)
-      .then((data) => data);
+    return fetch(this.path).then(convertToJson);
   }
+
   async findProductById(id) {
     const products = await this.getData();
-    return products.find((item) => item.Id === id);
+    return products.find((p) => String(p.Id) === String(id));
   }
 }
+
