@@ -22,27 +22,39 @@ function cartItemTemplate(item) {
     </li>
   `;
 }
-  
+
 function renderCartContents() {
   const list = document.querySelector(".product-list");
   if (!list) return;
-  
-  const cartItems = getLocalStorage("so-cart") || [];
+
+  let cartItems = getLocalStorage(CART_KEY) || [];
+  if (typeof cartItems === "string") {
+    try { cartItems = JSON.parse(cartItems); } catch { cartItems = []; }
+  }
+  cartItems = Array.isArray(cartItems) ? cartItems : [];
+
+  console.log("[cart] rendering items:", cartItems);
+
   if (cartItems.length === 0) {
     list.innerHTML = `<li class="cart-empty">Your cart is empty.</li>`;
     updateCartCount?.();
     return;
   }
-  
-  list.innerHTML = cartItems.map(cartItemTemplate).join("");
+
+  try {
+    list.innerHTML = cartItems.map(cartItemTemplate).join("");
+  } catch (err) {
+    console.error("[cart] render error:", err, { cartItems });
+    list.innerHTML = `<li class="cart-error">Sorry, we couldn’t render your cart.</li>`;
+  }
 }
 
 function onCartClick(e) {
   if (!e.target.classList.contains("remove-item")) return;
   const id = e.target.dataset.id;
-  const cartItems = getLocalStorage("so-cart") || [];
+  const cartItems = getLocalStorage(CART_KEY) || [];
   const updated = cartItems.filter((item) => String(item.Id) !== String(id));
-  setLocalStorage("so-cart", updated);
+  setLocalStorage(CART_KEY, updated);
   renderCartContents();
   updateCartCount();
 }
@@ -54,5 +66,3 @@ function initCartPage() {
 }
 
 document.addEventListener("DOMContentLoaded", initCartPage);
-
-
