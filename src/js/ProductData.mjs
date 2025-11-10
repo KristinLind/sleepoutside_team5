@@ -6,10 +6,8 @@ function convertToJson(res) {
 
 export default class ProductData {
   constructor(category = "tents") {
-    this.category = category || "tents";
-
-    const base = location.pathname.includes("/product_pages/") ? ".." : ".";
-    this.path = `${base}/json/${this.category}.json`; 
+    this.category = category;
+    this.path = new URL(`../json/${this.category}.json`, import.meta.url).href;
   }
 
   getData() {
@@ -18,7 +16,7 @@ export default class ProductData {
 
   async findProductById(id) {
     const products = await this.getData();
-    return products.find((p) => String(p.Id) === String(id));
+    return products.find(p => String(p.Id) === String(id));
   }
 }
 
