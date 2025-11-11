@@ -1,3 +1,11 @@
+// normalizePublicImage ensures image paths load correctly from the /public folder
+export function normalizePublicImage(p) {
+  const raw = String(p || "").trim();
+  if (!raw) return "";
+  if (/^https?:\/\//i.test(raw)) return raw; // full URL stays
+  return raw.startsWith("/") ? raw : `/${raw}`; // "images/..." → "/images/..."
+}
+
 // wrapper for querySelector...returns matching element
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
