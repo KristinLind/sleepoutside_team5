@@ -1,8 +1,10 @@
 // /src/js/main.js
 import ProductData from "./ProductData.mjs";
 import { updateCartCount } from "./cartCount.mjs";
-import { normalizePublicImage } from "./utils.mjs"; 
+import { normalizePublicImage, loadHeaderFooter } from "./utils.mjs"; 
 import Alert from "./Alert.js";
+
+loadHeaderFooter();
 
 const alertInstance = new Alert();
 alertInstance.init();
