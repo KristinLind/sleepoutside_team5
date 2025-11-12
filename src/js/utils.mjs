@@ -1,14 +1,13 @@
-// normalizePublicImage ensures image paths load correctly from the /public folder
+// normalizePublicImage function from public
 export function normalizePublicImage(p) {
   const raw = String(p || "").trim();
   if (!raw) return "";
-  if (/^https?:\/\//i.test(raw)) return raw; // full URL stays
-  return raw.startsWith("/") ? raw : `/${raw}`; // "images/..." → "/images/..."
+  if (/^https?:\/\//i.test(raw)) return raw; 
+  return raw.startsWith("/") ? raw : `/${raw}`; 
 }
 // Asynchronous Fetch
 export async function loadTemplate(path) {
   const res = await fetch(path);
-  // Ensure we handle network errors before converting to text
   if (!res.ok) {
     throw new Error(`Failed to load template from ${path}: Status ${res.status}`);
   }
@@ -27,8 +26,8 @@ export function renderWithTemplate(template, parentElement, data, callback) {
 //export async function HeaderFooter
 export async function loadHeaderFooter() {
   // Define paths to the partials
-  const headerPath = '../public/partials/header.html';
-  const footerPath = '../public/partials/footer.html';
+  const headerPath = '/partials/header.html';
+  const footerPath = '/partials/footer.html';
 
   // Load the templates concurrently (optional, but good practice)
   const [headerTemplate, footerTemplate] = await Promise.all([
