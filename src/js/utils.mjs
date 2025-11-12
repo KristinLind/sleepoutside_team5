@@ -12,6 +12,7 @@ export function getLocalStorage(key) {
   try {
     return JSON.parse(raw);
   } catch {
+    // eslint-disable-next-line no-console
     console.error(`Error parsing localStorage key: ${key}`);
     return null;
   }
@@ -19,15 +20,16 @@ export function getLocalStorage(key) {
 
 // save data to local storage
 export function setLocalStorage(key, data) {
+  // eslint-disable-next-line no-console
   console.log('[setLocalStorage]', key, { isArray: Array.isArray(data), data });
   localStorage.setItem(key, JSON.stringify(data));
 }
 
 // set a listener for both touchend and click
 export function setClick(selector, callback) {
-  qs(selector).addEventListener("touchend", (event) => {
+  qs(selector).addEventListener('touchend', (event) => {
     event.preventDefault();
     callback();
   });
-  qs(selector).addEventListener("click", callback);
+  qs(selector).addEventListener('click', callback);
 }
