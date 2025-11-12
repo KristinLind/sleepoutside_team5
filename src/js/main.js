@@ -2,6 +2,10 @@
 import ProductData from "./ProductData.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 import { normalizePublicImage } from "./utils.mjs"; 
+import Alert from "./Alert.js";
+
+const alertInstance = new Alert();
+alertInstance.init();
 
 const list = document.querySelector(".product-list");
 if (!list) {
