@@ -1,17 +1,38 @@
-
-
-
-export default class Productlist {
+export default class ProductList {
   constructor(category, dataSource, listElement) {
-    // You passed in this information to make the class as reusable as possible.
-    // Being able to define these things when you use the class will make it very flexible
     this.category = category;
     this.dataSource = dataSource;
     this.listElement = listElement;
   }
 
   async init() {
-    // the dataSource will return a Promise...so you can use await to resolve it.
+    // Get product data from the data source
     const list = await this.dataSource.getData();
+    // Once we have the data, render it to the page
+    this.renderList(list);
+  }
+
+  renderList(list) {
+    // Clear any existing content
+    this.listElement.innerHTML = '';
+
+    // Loop through each product and create HTML cards
+    list.forEach(product => {
+      this.listElement.appendChild(this.renderProductCard(product));
+    });
+  }
+
+  renderProductCard(product) {
+    const item = document.createElement('div');
+    item.classList.add('product-card');
+
+    item.innerHTML = `
+      <h3>${product.Name}</h3>
+      <p>${product.Description}</p>
+      <p><strong>Price:</strong> $${product.FinalPrice}</p>
+      <img src="${product.Image}" alt="${product.Name}">
+    `;
+
+    return item;
   }
 }
