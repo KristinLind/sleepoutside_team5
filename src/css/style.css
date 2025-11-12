@@ -117,7 +117,7 @@ p {
   margin-top: -1.3em;
 }
 
-.logo--square > div {
+.logo--square>div {
   margin-top: -1.7em;
 }
 
@@ -349,4 +349,39 @@ button {
 footer {
   font-size: var(--small-font);
   padding: 1em;
+}
+
+.cart-footer.hide {
+  display: none;
+}
+
+
+/* added this css for the cart total footer */
+.cart-footer {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+  text-align: right;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+
+/* added this css for the discount on home page*/
+.discount-badge {
+  display: inline-block;
+  background-color: #e63946;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: bold;
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+  margin-top: 0.5em;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #888;
+  margin-left: 0.5em;
+  font-size: 0.9rem;
 }
