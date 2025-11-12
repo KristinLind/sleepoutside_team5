@@ -32,8 +32,33 @@ img {
 
 header {
   display: flex;
-  justify-content: space-between;
   padding: 0.5rem;
+  background-color: var(--light-grey, #eee);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.header-logo-tent {
+  width: 60px;
+  height: 60px;
+}
+
+.header-title {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 30px;
+  font-family: var(--font-headline);
+}
+
+.cart {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 60px;
 }
 
 p {
@@ -42,13 +67,15 @@ p {
 
 .logo {
   line-height: 60px;
-  width: 245px;
-  overflow: hidden;
+  width: auto;
   display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 30px;
-  text-align: right;
   font-family: var(--font-headline);
+  margin: 0 auto;
 }
+
 
 .logo img {
   width: 60px;
