@@ -8,7 +8,7 @@ export default class Alert {
 
     try {
 
-      const response = await fetch('../public/json/alerts.json');
+      const response = await fetch('/json/alerts.json');
 
       if (!response.ok) {
         console.warn('Alerts file failed to load with status:', response.status);
