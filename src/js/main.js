@@ -46,12 +46,15 @@ async function loadProducts() {
 }
 
 function productCardTemplate(p) {
-  const price = Number.isFinite(+p.FinalPrice)
-    ? `$${(+p.FinalPrice).toFixed(2)}`
-    : `$${p.Price}`;
+  const final = Number(p.FinalPrice);
+  const retail = Number(p.SuggestedRetailPrice);
+  const isDiscounted = final < retail;
+  const discountPercent = isDiscounted
+    ? Math.round(((retail - final) / retail) * 100)
+    : 0;
 
+  const price = `$${final.toFixed(2)}`;
   const productHref = `./product_pages/index.html?product=${p.Id}`;
-
   const imgSrc = normalizePublicImage(p.Image);
   const fallback = normalizePublicImage("images/tents/placeholder-320.jpg");
 
@@ -65,7 +68,11 @@ function productCardTemplate(p) {
         >
         <h3 class="card__brand">${p.Brand?.Name ?? ""}</h3>
         <h2 class="card__name">${p.NameWithoutBrand || p.Name}</h2>
-        <p class="product-card__price">${price}</p>
+        <p class="product-card__price">
+          ${price}
+          ${isDiscounted ? `<span class="original-price">$${retail.toFixed(2)}</span>` : ""}
+        </p>
+        ${isDiscounted ? `<span class="discount-badge">Save ${discountPercent}%</span>` : ""}
       </a>
     </li>
   `;
