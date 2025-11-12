@@ -11,19 +11,21 @@ export function qs(selector, parent = document) {
   return parent.querySelector(selector);
 }
 
-// retrieve data from localstorage 
+// retrieve data from localStorage (always returns an array for cart safety)
 export function getLocalStorage(key) {
   const raw = localStorage.getItem(key);
-  if (!raw) return null; // 
+  if (!raw) return [];
+
   try {
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     console.error(`Error parsing localStorage key: ${key}`);
-    return null;
+    return [];
   }
 }
 
-// save data to local storage
+// save data to localStorage
 export function setLocalStorage(key, data) {
   console.log('[setLocalStorage]', key, { isArray: Array.isArray(data), data });
   localStorage.setItem(key, JSON.stringify(data));

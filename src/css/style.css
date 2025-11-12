@@ -323,3 +323,16 @@ footer {
   font-size: var(--small-font);
   padding: 1em;
 }
+
+.cart-footer.hide {
+  display: none;
+}
+
+/* .cart-footer {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+  text-align: right;
+  font-weight: bold;
+  font-size: 1.2rem;
+} */

@@ -1,12 +1,14 @@
+// [import] Bring in localStorage helpers and cart count updater
 import { getLocalStorage, setLocalStorage } from "./utils.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 
 const CART_KEY = "so-cart";
 
+// [template] Render each cart item with image, name, qty, price, and remove button
 function cartItemTemplate(item) {
   const imageSrc = `../${String(item.Image || "").replace(/^\/+/, "")}`;
-  const priceEach = Number(item.Price) || 0;
-  const qty = Number(item.Qty) || 1;
+  const priceEach = Number(item.Price || item.FinalPrice || item.ListPrice || 0);
+  const qty = Number(item.Qty || item.qty || 1);
   const lineTotal = (priceEach * qty).toFixed(2);
 
   return `
@@ -23,6 +25,29 @@ function cartItemTemplate(item) {
   `;
 }
 
+// [feature] Add cart total display logic to cart page
+function updateCartFooter(cartItems) {
+  const footer = document.querySelector(".cart-footer");
+  const totalSpan = document.getElementById("cart-total-value");
+
+  if (!footer || !totalSpan) return;
+
+  if (Array.isArray(cartItems) && cartItems.length > 0) {
+    const total = cartItems.reduce((sum, item) => {
+      const price = Number(item.Price || item.FinalPrice || item.ListPrice || 0);
+      const qty = Number(item.Qty || item.qty || 1);
+      return sum + price * qty;
+    }, 0);
+
+    totalSpan.textContent = total.toFixed(2);
+    footer.classList.remove("hide");
+  } else {
+    totalSpan.textContent = "0.00";
+    footer.classList.add("hide");
+  }
+}
+
+// [render] Load cart items and display them in the list
 function renderCartContents() {
   const list = document.querySelector(".product-list");
   if (!list) return;
@@ -35,20 +60,25 @@ function renderCartContents() {
 
   console.log("[cart] rendering items:", cartItems);
 
+  // ✅ [fallback] Hide cart total when cart is empty
   if (cartItems.length === 0) {
     list.innerHTML = `<li class="cart-empty">Your cart is empty.</li>`;
+    updateCartFooter([]); // ← added to hide footer
     updateCartCount?.();
     return;
   }
 
   try {
     list.innerHTML = cartItems.map(cartItemTemplate).join("");
+    updateCartFooter(cartItems); // ← added call here
   } catch (err) {
     console.error("[cart] render error:", err, { cartItems });
     list.innerHTML = `<li class="cart-error">Sorry, we couldn’t render your cart.</li>`;
+    updateCartFooter([]); // ← fallback call for error case
   }
 }
 
+// [interaction] Remove item from cart and re-render
 function onCartClick(e) {
   if (!e.target.classList.contains("remove-item")) return;
   const id = e.target.dataset.id;
@@ -59,6 +89,7 @@ function onCartClick(e) {
   updateCartCount();
 }
 
+// [init] Set up cart page on load
 function initCartPage() {
   document.querySelector(".product-list")?.addEventListener("click", onCartClick);
   renderCartContents();
