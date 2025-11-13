@@ -477,3 +477,25 @@ footer {
   }
 
 }
+
+/* css for the shop by category  */
+
+.category-grid {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.category-grid a {
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  width: 150px;
+}
+
+.category-grid img {
+  width: 100px;
+  height: auto;
+  margin-bottom: 0.5rem;
+}
