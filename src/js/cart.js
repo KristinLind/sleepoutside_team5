@@ -6,6 +6,7 @@ const CART_KEY = "so-cart";
 
 // [template] Render each cart item with image, name, qty, price, and remove button
 function cartItemTemplate(item) {
+
   const imageSrc = `../${String(item.Image || "").replace(/^\/+/, "")}`;
   const priceEach = Number(item.Price || item.FinalPrice || item.ListPrice || 0);
   const qty = Number(item.Qty || item.qty || 1);
@@ -21,11 +22,11 @@ function cartItemTemplate(item) {
       <p class="cart-card__quantity">qty: ${qty}</p>
       <p class="cart-card__price">$${lineTotal}</p>
       <button class="remove-item" data-id="${item.Id}" aria-label="Remove ${item.Name}">Remove</button>
-    </li>
-  `;
+      </li>
+   `;
 }
 
-// [feature] Add cart total display logic to cart page
+// Add cart total display logic to cart page
 function updateCartFooter(cartItems) {
   const footer = document.querySelector(".cart-footer");
   const totalSpan = document.getElementById("cart-total-value");
@@ -35,6 +36,7 @@ function updateCartFooter(cartItems) {
   if (Array.isArray(cartItems) && cartItems.length > 0) {
     const total = cartItems.reduce((sum, item) => {
       const price = Number(item.Price || item.FinalPrice || item.ListPrice || 0);
+      // NOTE: Using 'Qty' for consistency with ProductDetails.mjs
       const qty = Number(item.Qty || item.qty || 1);
       return sum + price * qty;
     }, 0);
@@ -47,7 +49,7 @@ function updateCartFooter(cartItems) {
   }
 }
 
-// [render] Load cart items and display them in the list
+// Load cart items and display them in the list
 function renderCartContents() {
   const list = document.querySelector(".product-list");
   if (!list) return;
@@ -60,36 +62,53 @@ function renderCartContents() {
 
   console.log("[cart] rendering items:", cartItems);
 
-  // ✅ [fallback] Hide cart total when cart is empty
+  // Hide cart total when cart is empty
   if (cartItems.length === 0) {
     list.innerHTML = `<li class="cart-empty">Your cart is empty.</li>`;
-    updateCartFooter([]); // ← added to hide footer
+    updateCartFooter([]);
     updateCartCount?.();
     return;
   }
 
   try {
     list.innerHTML = cartItems.map(cartItemTemplate).join("");
-    updateCartFooter(cartItems); // ← added call here
+    updateCartFooter(cartItems); 
   } catch (err) {
     console.error("[cart] render error:", err, { cartItems });
-    list.innerHTML = `<li class="cart-error">Sorry, we couldn’t render your cart.</li>`;
-    updateCartFooter([]); // ← fallback call for error case
+    list.innerHTML = `<li class="cart-error">Sorry, we couldn't render your cart.</li>`;
+    updateCartFooter([]); 
   }
 }
 
-// [interaction] Remove item from cart and re-render
+// Remove item from cart and re-render
 function onCartClick(e) {
   if (!e.target.classList.contains("remove-item")) return;
   const id = e.target.dataset.id;
   const cartItems = getLocalStorage(CART_KEY) || [];
-  const updated = cartItems.filter((item) => String(item.Id) !== String(id));
-  setLocalStorage(CART_KEY, updated);
-  renderCartContents();
-  updateCartCount();
+
+  // Find the index of the item to be modified
+  const itemIndex = cartItems.findIndex((item) => String(item.Id) === String(id));
+
+  if (itemIndex > -1) {
+    // Determine the current quantity 
+    const currentQty = cartItems[itemIndex].Qty || 1;
+
+    if (currentQty > 1) {
+      // Decrement quantity by one
+      cartItems[itemIndex].Qty = currentQty - 1;
+    } else {
+      // If quantity is 1 or less, remove the item entirely
+      cartItems.splice(itemIndex, 1);
+    }
+
+    setLocalStorage(CART_KEY, cartItems);
+    // Re-render the cart list and update the totals and badge count
+    renderCartContents();
+    updateCartCount();
+  }
 }
 
-// [init] Set up cart page on load
+// Set up cart page on load
 function initCartPage() {
   document.querySelector(".product-list")?.addEventListener("click", onCartClick);
   renderCartContents();

@@ -5,7 +5,7 @@ const CART_KEY = "so-cart";
 
 export function updateCartCount() {
   const items = getLocalStorage(CART_KEY) || [];   // <- use the helper
-  const count = items.reduce((sum, i) => sum + (i.qty ?? 1), 0);
+  const count = items.reduce((sum, i) => sum + (i.Qty ?? 1), 0);
 
   const badge = document.getElementById('cart-count');
   if (!badge) return;
