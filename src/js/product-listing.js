@@ -2,12 +2,6 @@
 
 console.log("Product listing page loaded");
 
-document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("product-listing");
-  container.innerHTML = "<p>Loading products...</p>";
-
-  // Future: fetch and render products dynamically
-});
 
 
 
@@ -80,8 +74,3 @@ function productCardTemplate(p) {
   `;
 }
 
-if (display.length === 0) {
-  list.innerHTML = "<li>No products found for this category.</li>";
-} else {
-  list.innerHTML = display;
-}
