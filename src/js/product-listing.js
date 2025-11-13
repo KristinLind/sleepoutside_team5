@@ -79,3 +79,9 @@ function productCardTemplate(p) {
     </li>
   `;
 }
+
+if (display.length === 0) {
+  list.innerHTML = "<li>No products found for this category.</li>";
+} else {
+  list.innerHTML = display;
+}
