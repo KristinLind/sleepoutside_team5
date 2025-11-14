@@ -7,9 +7,10 @@ function convertToJson(res) {
   return res.json();
 }
 
-export default class ProductData {
-  constructor() {
-    // no category or path stored here anymore
+export default class Productist {
+  constructor(category) {
+    this.category = category;
+    this.path = `/json/${this.category}.json`; 
   }
 
   // ✅ Fetch products by category from API
