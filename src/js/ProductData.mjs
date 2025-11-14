@@ -19,14 +19,13 @@ export default class ProductData {
     return data.Result; // API wraps results differently than local JSON
   }
 
-  // ✅ Find product by ID using API data
-  async findProductById(id, category) {
-    const products = await this.getData(category);
-    return products.find(item => String(item.Id) === String(id));
+  // ✅ Find product by ID directly from API
+  async findProductById(id) {
+    const response = await fetch(`${baseURL}product/${id}`);
+    const data = await convertToJson(response);
+    return data.Result; // check API shape; may be data.Product or data.Result
   }
 }
- 
-
 
 
 
