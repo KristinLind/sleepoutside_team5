@@ -10,8 +10,20 @@ export default class ProductData {
     this.path = `/json/${this.category}.json`; 
   }
 
+  // added to handel both file types
   getData() {
-    return fetch(this.path).then(convertToJson);
+    return fetch(this.path)
+      .then(convertToJson)
+      .then(data => {
+        if (Array.isArray(data)) {
+          return data; // tents
+        }
+        if (Array.isArray(data.Result)) {
+          return data.Result; // sleeping-bags, backpacks, hammocks
+        }
+        console.error("Unexpected data format:", data);
+        return [];
+      });
   }
 
   async findProductById(id) {
