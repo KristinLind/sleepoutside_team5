@@ -1,11 +1,6 @@
-// src/js/product-listing.js
-
 console.log("Product listing page loaded");
 
-
-
-
-//new week 3 
+// new week 3
 import ProductData from "./ProductData.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 import { normalizePublicImage, loadHeaderFooter } from "./utils.mjs";
@@ -29,17 +24,18 @@ async function loadProducts() {
   const category = params.get("category") || "tents";
 
   try {
-    const dataSource = new ProductData(category);
-    const products = await dataSource.getData();
+    // ✅ Instantiate without category
+    const dataSource = new ProductData();
+    // ✅ Pass category into getData
+    const products = await dataSource.getData(category);
 
-    // ✅ Add the guard here
     if (!products || products.length === 0) {
       list.innerHTML = `<li>No products found for "${category}".</li>`;
-      return; // stop here so filter/map doesn’t run
+      return;
     }
 
     const display = products
-      .filter(p => !!(p.Image || p.Images?.PrimaryLarge)) // handle both formats
+      .filter(p => !!(p.Image || p.Images?.PrimaryLarge))
       .map(productCardTemplate)
       .join("");
 
@@ -49,7 +45,6 @@ async function loadProducts() {
     list.innerHTML = "<li>Failed to load products.</li>";
   }
 }
-
 
 function productCardTemplate(p) {
   const final = Number(p.FinalPrice);
@@ -62,7 +57,7 @@ function productCardTemplate(p) {
   const price = `$${final.toFixed(2)}`;
   const productHref = `../product_pages/index.html?product=${p.Id}`;
 
-  // pick image: prefer p.Image, fallback to p.Images.PrimaryLarge
+  // ✅ normalizePublicImage now prepends baseURL for relative API paths
   const imgSrc = normalizePublicImage(p.Image || p.Images?.PrimaryLarge);
   const fallback = normalizePublicImage("images/tents/placeholder-320.jpg");
 
@@ -82,6 +77,3 @@ function productCardTemplate(p) {
     </li>
   `;
 }
-
-
-
