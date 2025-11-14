@@ -32,8 +32,14 @@ async function loadProducts() {
     const dataSource = new ProductData(category);
     const products = await dataSource.getData();
 
+    // ✅ Add the guard here
+    if (!products || products.length === 0) {
+      list.innerHTML = `<li>No products found for "${category}".</li>`;
+      return; // stop here so filter/map doesn’t run
+    }
+
     const display = products
-      .filter(p => !!p.Image)
+      .filter(p => !!(p.Image || p.Images?.PrimaryLarge)) // handle both formats
       .map(productCardTemplate)
       .join("");
 
@@ -43,6 +49,7 @@ async function loadProducts() {
     list.innerHTML = "<li>Failed to load products.</li>";
   }
 }
+
 
 function productCardTemplate(p) {
   const final = Number(p.FinalPrice);
@@ -54,7 +61,9 @@ function productCardTemplate(p) {
 
   const price = `$${final.toFixed(2)}`;
   const productHref = `../product_pages/index.html?product=${p.Id}`;
-  const imgSrc = normalizePublicImage(p.Image);
+
+  // pick image: prefer p.Image, fallback to p.Images.PrimaryLarge
+  const imgSrc = normalizePublicImage(p.Image || p.Images?.PrimaryLarge);
   const fallback = normalizePublicImage("images/tents/placeholder-320.jpg");
 
   return `
@@ -73,4 +82,6 @@ function productCardTemplate(p) {
     </li>
   `;
 }
+
+
 
