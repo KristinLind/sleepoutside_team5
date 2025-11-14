@@ -64,6 +64,7 @@ export function getLocalStorage(key) {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
+    // eslint-disable-next-line no-console
     console.error(`Error parsing localStorage key: ${key}`);
     return [];
   }
@@ -71,6 +72,7 @@ export function getLocalStorage(key) {
 
 // save data to localStorage
 export function setLocalStorage(key, data) {
+  // eslint-disable-next-line no-console
   console.log('[setLocalStorage]', key, { isArray: Array.isArray(data), data });
   localStorage.setItem(key, JSON.stringify(data));
 }
