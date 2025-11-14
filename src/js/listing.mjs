@@ -1,14 +1,16 @@
 import ProductData from "./ProductData.mjs";
+import { getParams, normalizePublicImage } from "./utils.mjs";
 
 function productCardTemplate(p) {
   const brand = p.Brand?.Name ?? p.Brand ?? "";
   const name = p.NameWithoutBrand ?? p.Name ?? "";
-  const img = p.Images?.PrimaryLarge || p.Image || "";
+
+  // ✅ Normalize image path so relative API paths resolve correctly
+  const img = normalizePublicImage(p.Image || p.Images?.PrimaryLarge || "");
   const price = Number.isFinite(+p.FinalPrice)
     ? `$${(+p.FinalPrice).toFixed(2)}`
     : (p.FinalPrice ?? p.SuggestedRetailPrice ?? "");
 
-  // IMPORTANT: link to ONE details page with a URL param
   const href = `/product_pages/index.html?product=${encodeURIComponent(p.Id)}`;
 
   return `
@@ -27,14 +29,23 @@ async function renderList() {
   const listEl = document.querySelector(".product-list");
   if (!listEl) return;
 
-  const data = new ProductData("tents");
-  const products = await data.getData();
+  //  Get category from URL instead of hardcoding "tents"
+  const category = getParams("category") || "tents";
 
-  const items = Array.isArray(products) ? products
-    : Array.isArray(products.Result) ? products.Result
-      : [];
+  try {
+    const dataSource = new ProductData();
+    const products = await dataSource.getData(category);
 
-  listEl.innerHTML = items.map(productCardTemplate).join("");
+    if (!products || products.length === 0) {
+      listEl.innerHTML = `<li>No products found for "${category}".</li>`;
+      return;
+    }
+
+    listEl.innerHTML = products.map(productCardTemplate).join("");
+  } catch (err) {
+    console.error("Error loading products:", err);
+    listEl.innerHTML = "<li>Failed to load products.</li>";
+  }
 }
 
 document.addEventListener("DOMContentLoaded", renderList);
