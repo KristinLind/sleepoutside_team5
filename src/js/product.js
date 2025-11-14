@@ -1,25 +1,16 @@
-import ProductData from './ProductData.mjs';
-import { getLocalStorage, setLocalStorage } from './utils.mjs';
-
-const dataSource = new ProductData('tents');
-
-//add products without overwriting previous cart
-function addProductToCart(product) {
-  const KEY = 'so-cart';
-  const current = getLocalStorage(KEY);
-  const cart = Array.isArray(current) ? current : current ? [current] : [];
-  cart.push(product);
-  setLocalStorage(KEY, cart);
-}
+import ProductData from "./ProductData.mjs";
+import ProductDetails from "./ProductDetails.mjs";
+import { updateCartCount } from "./cartCount.mjs";
 
 
-// add to cart button event handler
-async function addToCartHandler(e) {
-  const product = await dataSource.findProductById(e.target.dataset.id);
-  addProductToCart(product);
-}
+document.addEventListener("DOMContentLoaded", async () => {
+  updateCartCount();
 
-// add listener to Add to Cart button
-document
-  .getElementById('addToCart')
-  .addEventListener('click', addToCartHandler);
+  const productID = new URLSearchParams(window.location.search).get("product");
+  if (!productID) return;
+
+  const dataSource = new ProductData("tents");
+  const details = new ProductDetails(productID, dataSource);
+  details.init();
+});
+
