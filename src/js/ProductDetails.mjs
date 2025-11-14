@@ -1,5 +1,5 @@
 // src/js/ProductDetails.mjs
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, normalizePublicImage } from "./utils.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 
 const CART_KEY = "so-cart";
@@ -12,10 +12,14 @@ export default class ProductDetails {
   }
 
   async init() {
-    this.product = await this.dataSource.findProductById(this.productId);
-    this.renderProductDetails();
-    document.getElementById("addToCart")
-      .addEventListener("click", this.addProductToCart.bind(this));
+    try {
+      this.product = await this.dataSource.findProductById(this.productId);
+      this.renderProductDetails();
+      document.getElementById("addToCart")
+        .addEventListener("click", this.addProductToCart.bind(this));
+    } catch (err) {
+      console.error("Error loading product details:", err);
+    }
   }
 
   addProductToCart() {
@@ -26,7 +30,6 @@ export default class ProductDetails {
       Name: this.product.Name,
       Price: this.product.FinalPrice ?? this.product.Price ?? 0,
       Image: String(this.product.Image || "").replace(/^\/+/, ""),
-    
       Color: this.product?.Colors?.[0]?.ColorName ?? "",
       Qty: 1
     };
@@ -44,17 +47,16 @@ export default class ProductDetails {
   }
 }
 
-// ProductDetails.mjs
 function productDetailsTemplate(product) {
   document.getElementById("brand").textContent = product.Brand?.Name ?? "";
-  document.getElementById("title").textContent = product.NameWithoutBrand ?? "";
+  document.getElementById("title").textContent = product.NameWithoutBrand || product.Name || "";
 
   const img = document.getElementById("productImage");
-  img.src = product.Image;
-  img.alt = product.NameWithoutBrand ?? "";
+  img.src = normalizePublicImage(product.Image || product.Images?.PrimaryLarge || "");
+  img.alt = product.NameWithoutBrand || product.Name || "";
 
   document.getElementById("productPrice").textContent =
-    `$${product.FinalPrice ?? product.Price ?? 0}`;
+    `$${Number(product.FinalPrice ?? product.Price ?? 0).toFixed(2)}`;
 
   document.getElementById("productColor").textContent =
     product?.Colors?.[0]?.ColorName ?? "";
@@ -64,7 +66,3 @@ function productDetailsTemplate(product) {
 
   document.getElementById("addToCart").dataset.id = product.Id;
 }
-
-
-
-
