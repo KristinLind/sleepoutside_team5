@@ -26,6 +26,3 @@ export default class ProductData {
     return data.Result; // check API shape; may be data.Product or data.Result
   }
 }
-
-
-
