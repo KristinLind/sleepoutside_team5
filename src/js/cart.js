@@ -1,5 +1,5 @@
 // [import] Bring in localStorage helpers and cart count updater
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { loadHeaderFooter, getLocalStorage, setLocalStorage, normalizePublicImage } from "./utils.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 
 const CART_KEY = "so-cart";
@@ -7,7 +7,21 @@ const CART_KEY = "so-cart";
 // [template] Render each cart item with image, name, qty, price, and remove button
 function cartItemTemplate(item) {
 
-  const imageSrc = `../${String(item.Image || "").replace(/^\/+/, "")}`;
+  console.log("[cart] item image fields:", {
+    Image: item.Image,
+    Images: item.Images
+  });
+  const rawImagePath =
+    item.Images?.PrimaryMedium ||
+    item.Images?.PrimaryLarge ||
+    item.Image ||
+    "";
+  
+  const imageSrc = normalizePublicImage(rawImagePath);
+  const fallback = normalizePublicImage("images/tents/placeholder-320.jpg");
+
+  console.log("[cart] computed imageSrc:", imageSrc);
+
   const priceEach = Number(item.Price || item.FinalPrice || item.ListPrice || 0);
   const qty = Number(item.Qty || item.qty || 1);
   const lineTotal = (priceEach * qty).toFixed(2);
@@ -15,7 +29,8 @@ function cartItemTemplate(item) {
   return `
     <li class="cart-card divider" data-id="${item.Id}">
       <a href="#" class="cart-card__image">
-        <img src="${imageSrc}" alt="${item.Name}" />
+        <img src="${imageSrc}" alt="${item.Name}" loading="lazy" 
+        onerror="this.onerror=null;this.src='${fallback}'"/>
       </a>
       <a href="#"><h2 class="card__name">${item.Name}</h2></a>
       ${item.Color ? `<p class="cart-card__color">${item.Color}</p>` : ""}
@@ -115,4 +130,7 @@ function initCartPage() {
   updateCartCount();
 }
 
-document.addEventListener("DOMContentLoaded", initCartPage);
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadHeaderFooter();   // ← new
+  initCartPage();             // ← same init function as before
+});
