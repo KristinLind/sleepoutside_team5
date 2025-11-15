@@ -40,8 +40,8 @@ img {
 header {
   display: flex;
   padding: 0.5rem;
-  background-color: white;
-  border-bottom: 20px solid var(--primary-color);
+  background-color: var(--light-grey);
+  border-bottom: 20px solid var(--secondary-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -50,12 +50,14 @@ header {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  padding: 0 2rem;
 }
 
-.header-logo-tent {
+.header-logo-tent { 
   width: 60px;
   height: 60px;
   object-fit: contain;
+  margin-left: 2rem;
 }
 
 .header-title {
@@ -498,4 +500,12 @@ footer {
   width: 100px;
   height: auto;
   margin-bottom: 0.5rem;
+}
+
+main h2, 
+main h3 {
+  text-align: center;
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }

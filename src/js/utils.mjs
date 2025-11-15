@@ -2,60 +2,68 @@
 export function normalizePublicImage(p) {
   const raw = String(p || "").trim();
   if (!raw) return "";
-  if (/^https?:\/\//i.test(raw)) return raw; 
-  return raw.startsWith("/") ? raw : `/${raw}`; 
+
+  if (/^https?:\/\//i.test(raw)) return raw;
+
+  const cleaned = raw
+    .replace(/^(\.\.\/)+/, "")  // strip any ../ at the start
+    .replace(/^\.\/+/, "")      // strip any ./ at the start
+    .replace(/^\/+/, "");       // strip leading slashes
+
+  return `/${cleaned}`;
 }
+
 // Asynchronous Fetch
 export async function loadTemplate(path) {
   const res = await fetch(path);
   if (!res.ok) {
-    throw new Error(`Failed to load template from ${path}: Status ${res.status}`);
+    throw new Error(
+      `Failed to load template from ${path}: Status ${res.status}`
+    );
   }
   const template = await res.text();
   return template;
 }
-//export template
+
+// render template into a parent element
 export function renderWithTemplate(template, parentElement, data, callback) {
   parentElement.innerHTML = template;
-  // Check for and execute the optional callback function
   if (callback) {
     callback(data);
   }
 }
 
-//export async function HeaderFooter
+// load header and footer partials
 export async function loadHeaderFooter() {
-  // Define paths to the partials
-  const headerPath = '/partials/header.html';
-  const footerPath = '/partials/footer.html';
+  const headerPath = "/partials/header.html";
+  const footerPath = "/partials/footer.html";
 
-  // Load the templates concurrently (optional, but good practice)
+  // Load the templates concurrently
   const [headerTemplate, footerTemplate] = await Promise.all([
     loadTemplate(headerPath),
-    loadTemplate(footerPath)
+    loadTemplate(footerPath),
   ]);
 
-  // Grab the placeholder elements from the DOM
   const headerElement = document.querySelector("#main-header");
   const footerElement = document.querySelector("#main-footer");
 
-  // Render the templates. Header requires no data or callback here.
   if (headerElement) {
     renderWithTemplate(headerTemplate, headerElement);
   }
 
-  // Render the footer. Footer requires no data or callback here.
   if (footerElement) {
     renderWithTemplate(footerTemplate, footerElement);
   }
+
+  return true;
 }
 
-// wrapper for querySelector...returns matching element
+// wrapper for querySelector
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
 }
 
-// retrieve data from localStorage (always returns an array for cart safety)
+// retrieve data from localStorage
 export function getLocalStorage(key) {
   const raw = localStorage.getItem(key);
   if (!raw) return [];
@@ -64,7 +72,6 @@ export function getLocalStorage(key) {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    // eslint-disable-next-line no-console
     console.error(`Error parsing localStorage key: ${key}`);
     return [];
   }
@@ -72,8 +79,7 @@ export function getLocalStorage(key) {
 
 // save data to localStorage
 export function setLocalStorage(key, data) {
-  // eslint-disable-next-line no-console
-  console.log('[setLocalStorage]', key, { isArray: Array.isArray(data), data });
+  console.log("[setLocalStorage]", key, { isArray: Array.isArray(data), data });
   localStorage.setItem(key, JSON.stringify(data));
 }
 
