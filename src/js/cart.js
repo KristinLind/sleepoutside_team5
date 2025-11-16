@@ -1,61 +1,45 @@
-// [import] Bring in localStorage helpers and cart count updater
+// src/js/cart.js
+
 import { loadHeaderFooter, getLocalStorage, setLocalStorage, normalizePublicImage } from "./utils.mjs";
 import { updateCartCount } from "./cartCount.mjs";
+import { normalizeCartItems } from "./cartUtils.mjs";   // ← new import
 
 const CART_KEY = "so-cart";
 
-// [template] Render each cart item with image, name, qty, price, and remove button
 function cartItemTemplate(item) {
-
-  console.log("[cart] item image fields:", {
-    Image: item.Image,
-    Images: item.Images
-  });
   const rawImagePath =
     item.Images?.PrimaryMedium ||
     item.Images?.PrimaryLarge ||
     item.Image ||
     "";
-  
+
   const imageSrc = normalizePublicImage(rawImagePath);
   const fallback = normalizePublicImage("images/tents/placeholder-320.jpg");
 
-  console.log("[cart] computed imageSrc:", imageSrc);
-
-  const priceEach = Number(item.Price || item.FinalPrice || item.ListPrice || 0);
-  const qty = Number(item.Qty || item.qty || 1);
-  const lineTotal = (priceEach * qty).toFixed(2);
+  const lineTotal = (item.Price * item.Qty).toFixed(2);
 
   return `
     <li class="cart-card divider" data-id="${item.Id}">
       <a href="#" class="cart-card__image">
-        <img src="${imageSrc}" alt="${item.Name}" loading="lazy" 
+        <img src="${imageSrc}" alt="${item.Name}" loading="lazy"
         onerror="this.onerror=null;this.src='${fallback}'"/>
       </a>
       <a href="#"><h2 class="card__name">${item.Name}</h2></a>
       ${item.Color ? `<p class="cart-card__color">${item.Color}</p>` : ""}
-      <p class="cart-card__quantity">qty: ${qty}</p>
+      <p class="cart-card__quantity">qty: ${item.Qty}</p>
       <p class="cart-card__price">$${lineTotal}</p>
       <button class="remove-item" data-id="${item.Id}" aria-label="Remove ${item.Name}">Remove</button>
-      </li>
-   `;
+    </li>
+  `;
 }
 
-// Add cart total display logic to cart page
 function updateCartFooter(cartItems) {
   const footer = document.querySelector(".cart-footer");
   const totalSpan = document.getElementById("cart-total-value");
-
   if (!footer || !totalSpan) return;
 
-  if (Array.isArray(cartItems) && cartItems.length > 0) {
-    const total = cartItems.reduce((sum, item) => {
-      const price = Number(item.Price || item.FinalPrice || item.ListPrice || 0);
-      // NOTE: Using 'Qty' for consistency with ProductDetails.mjs
-      const qty = Number(item.Qty || item.qty || 1);
-      return sum + price * qty;
-    }, 0);
-
+  if (cartItems.length > 0) {
+    const total = cartItems.reduce((sum, item) => sum + item.Price * item.Qty, 0);
     totalSpan.textContent = total.toFixed(2);
     footer.classList.remove("hide");
   } else {
@@ -64,7 +48,6 @@ function updateCartFooter(cartItems) {
   }
 }
 
-// Load cart items and display them in the list
 function renderCartContents() {
   const list = document.querySelector(".product-list");
   if (!list) return;
@@ -75,9 +58,9 @@ function renderCartContents() {
   }
   cartItems = Array.isArray(cartItems) ? cartItems : [];
 
-  console.log("[cart] rendering items:", cartItems);
+  // ✅ Normalize once here
+  cartItems = normalizeCartItems(cartItems);
 
-  // Hide cart total when cart is empty
   if (cartItems.length === 0) {
     list.innerHTML = `<li class="cart-empty">Your cart is empty.</li>`;
     updateCartFooter([]);
@@ -87,43 +70,36 @@ function renderCartContents() {
 
   try {
     list.innerHTML = cartItems.map(cartItemTemplate).join("");
-    updateCartFooter(cartItems); 
+    updateCartFooter(cartItems);
   } catch (err) {
     console.error("[cart] render error:", err, { cartItems });
     list.innerHTML = `<li class="cart-error">Sorry, we couldn't render your cart.</li>`;
-    updateCartFooter([]); 
+    updateCartFooter([]);
   }
 }
 
-// Remove item from cart and re-render
 function onCartClick(e) {
   if (!e.target.classList.contains("remove-item")) return;
   const id = e.target.dataset.id;
-  const cartItems = getLocalStorage(CART_KEY) || [];
+  let cartItems = getLocalStorage(CART_KEY) || [];
 
-  // Find the index of the item to be modified
-  const itemIndex = cartItems.findIndex((item) => String(item.Id) === String(id));
+  // ✅ Normalize before modifying
+  cartItems = normalizeCartItems(cartItems);
 
+  const itemIndex = cartItems.findIndex(item => String(item.Id) === String(id));
   if (itemIndex > -1) {
-    // Determine the current quantity 
-    const currentQty = cartItems[itemIndex].Qty || 1;
-
+    const currentQty = cartItems[itemIndex].Qty;
     if (currentQty > 1) {
-      // Decrement quantity by one
       cartItems[itemIndex].Qty = currentQty - 1;
     } else {
-      // If quantity is 1 or less, remove the item entirely
       cartItems.splice(itemIndex, 1);
     }
-
     setLocalStorage(CART_KEY, cartItems);
-    // Re-render the cart list and update the totals and badge count
     renderCartContents();
     updateCartCount();
   }
 }
 
-// Set up cart page on load
 function initCartPage() {
   document.querySelector(".product-list")?.addEventListener("click", onCartClick);
   renderCartContents();
@@ -131,6 +107,6 @@ function initCartPage() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadHeaderFooter();   // ← new
-  initCartPage();             // ← same init function as before
+  await loadHeaderFooter();
+  initCartPage();
 });

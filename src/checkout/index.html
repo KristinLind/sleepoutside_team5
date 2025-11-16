@@ -1,23 +1,61 @@
+<!-- checkout.html -->
+
 <!doctype html>
-
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sleep Outside | Checkout</title>
-    <link rel="stylesheet" href="/css/style.css" />
-  </head>
 
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sleep Outside | Home</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
   <header class="divider" id="main-header"></header>
 
-    <main class="divider">
-      <section class="products">
-        <h2>Review & Place your Order</h2>
-      </section>
-    </main>
+  <main class="divider">
+    <section class="checkout">
+      <h2>Review & Place Your Order</h2>
 
-    <footer>&copy;NOT a real business</footer>
-    <script type="module" src="/js/cart.js"></script>
+      <!-- Checkout Form -->
+      <form id="checkout-form">
+        <fieldset>
+          <legend>Customer Information</legend>
+          <label>First Name <input type="text" name="firstName" required></label>
+          <label>Last Name <input type="text" name="lastName" required></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Address</legend>
+          <label>Street Address <input type="text" name="street" required></label>
+          <label>City <input type="text" name="city" required></label>
+          <label>State <input type="text" name="state" required></label>
+          <label>Zip Code <input type="text" name="zip" required></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Payment</legend>
+          <label>Credit Card Number <input type="text" name="cardNumber" required></label>
+          <label>Expiration Date <input type="text" name="expDate" required placeholder="MM/YY"></label>
+          <label>Security Code <input type="text" name="cvv" required></label>
+        </fieldset>
+
+        <button type="submit">Complete Checkout</button>
+      </form>
+
+      <!-- Order Summary -->
+      <aside class="order-summary">
+        <h3>Order Summary</h3>
+        <p>Subtotal: $<span id="summary-subtotal">0.00</span></p>
+        <p>Tax: $<span id="summary-tax">0.00</span></p>
+        <p>Shipping: $<span id="summary-shipping">0.00</span></p>
+        <p><strong>Total: $<span id="summary-total">0.00</span></strong></p>
+      </aside>
+    </section>
+  </main>
+
+  <footer id="main-footer"></footer>
+  <script type="module" src="/js/checkout.js"></script>
   </body>
-</html>
+  
+  </html>
