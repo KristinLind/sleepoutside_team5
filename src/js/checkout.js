@@ -1,12 +1,15 @@
 // checkout.js
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
-import { normalizeCartItems } from "./cartUtils.mjs";   // ✅ new import
+import { getLocalStorage, setLocalStorage, loadHeaderFooter } from "./utils.mjs";
+import { normalizeCartItems } from "./cartUtils.mjs";
 
 const CART_KEY = "so-cart";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  // ✅ Inject header and footer
+  await loadHeaderFooter();
+
   let cartItems = getLocalStorage(CART_KEY) || [];
-  cartItems = normalizeCartItems(cartItems);            // ✅ normalize before use
+  cartItems = normalizeCartItems(cartItems); // normalize before use
   updateOrderSummary(cartItems);
 
   const form = document.getElementById("checkout-form");
