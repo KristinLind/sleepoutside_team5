@@ -1,11 +1,11 @@
-import ProductData from "./ProductData.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 import { getParams, normalizePublicImage } from "./utils.mjs";
 
 function productCardTemplate(p) {
   const brand = p.Brand?.Name ?? p.Brand ?? "";
   const name = p.NameWithoutBrand ?? p.Name ?? "";
 
-  // ✅ Normalize image path so relative API paths resolve correctly
+  // Normalize image path so relative API paths resolve correctly
   const img = normalizePublicImage(p.Image || p.Images?.PrimaryLarge || "");
   const price = Number.isFinite(+p.FinalPrice)
     ? `$${(+p.FinalPrice).toFixed(2)}`
@@ -33,7 +33,7 @@ async function renderList() {
   const category = getParams("category") || "tents";
 
   try {
-    const dataSource = new ProductData();
+    const dataSource = new ExternalServices();
     const products = await dataSource.getData(category);
 
     if (!products || products.length === 0) {

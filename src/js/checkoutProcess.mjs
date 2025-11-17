@@ -92,15 +92,15 @@ export default class CheckoutProcess {
     // 4. Combine all data into the server-required payload format
     const payload = {
       // Form Data: Ensure these keys (fname, lname, etc.) match the server's requirements!
-      fname: formObject.firstName,
-      lname: formObject.lastName,
-      street: formObject.streetAddress,
+      fname: formObject.fname,
+      lname: formObject.lname,
+      street: formObject.street,
       city: formObject.city,
       state: formObject.state,
-      zip: formObject.zipCode,
+      zip: formObject.zip,
       cardNumber: formObject.cardNumber,
       expiration: formObject.expiration,
-      code: formObject.securityCode,
+      code: formObject.code,
 
       // Calculated/Internal Data
       orderDate: new Date().toISOString(),

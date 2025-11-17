@@ -1,5 +1,5 @@
 // checkout.js
-import { setLocalStorage, loadHeaderFooter } from "./utils.mjs"; 
+import { setLocalStorage, loadHeaderFooter, alertMessage } from "./utils.mjs"; 
 import CheckoutProcess from "./checkoutProcess.mjs";
 
 
@@ -25,10 +25,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault(); 
-    // Basic form validation check
+
+    const form = document.getElementById("checkout-form");
     if (!form.checkValidity()) {
-      alert("Please fill out all required fields.");
-      return;
+      form.reportValidity(); 
+      return; 
     }
 
     try {
@@ -39,12 +40,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // Added Success Logic:
       setLocalStorage(CART_KEY, []); 
-      sessionStorage.setItem("lastOrder", JSON.stringify(orderResponse.Result)); // Save the response if needed for confirmation page
+      sessionStorage.setItem("lastOrder", JSON.stringify(orderResponse.Result));
       window.location.href = "/checkout/confirmation.html"; 
-      
+
     } catch (error) {
-      // Handle server/network errors
-      alert("Order submission failed. See console for details.");
+      console.error("Checkout failed:", error); // Log the error object
+
+      if (error.name === 'servicesError' && error.message && error.message.message) {
+        // Extract the specific message from the server
+        const serverMessage = error.message.message;
+        alertMessage(`Order submission failed: ${serverMessage}`, true);
+      } else {
+        // Fallback for network errors or unhandled error types
+        alertMessage("An unknown error occurred during checkout. Please try again.");
+      }
     }
   });
 });

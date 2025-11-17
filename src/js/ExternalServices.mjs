@@ -3,12 +3,14 @@ const baseURL = import.meta.env.VITE_SERVER_URL;
 // Define the specific checkout endpoint
 const CHECKOUT_URL = `${baseURL}checkout`;
 
-function convertToJson(res) {
+async function convertToJson(res) {
+  const jsonResponse = await res.json();
   if (!res.ok) {
-    console.error("HTTP Error Details:", res);
-    throw new Error(`HTTP ${res.status} fetching ${res.url}`);
+    // if not ok, throw the custom eror structure.
+    throw { name: 'servicesError', message: jsonResponse };
   }
-  return res.json();
+  // if it is ok, return response
+  return jsonResponse;
 }
 
 export default class ExternalServices {
@@ -33,12 +35,18 @@ export default class ExternalServices {
 
   // Checkout method
   async checkout(payload) {
+    // NOTE: This is a publicly shared API for a school project.
+
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZmZiZjkxOTQ0NWY1MDAwNDkyZDUzOSIsImlhdCI6MTYyNzQxNzk3M30.4rT3y0fR-v1y3D-f3c5q-t4S-k23H-sX50352Y8W3gY";
     const options = {
       // Must be a POST request
       method: "POST",
       headers: {
         // Tell the server the body is JSON
         "Content-Type": "application/json",
+
+        // Add this authorization header;
+        "Authorization": `Bearer ${token}`
       },
       // The payload must be stringified JSON
       body: JSON.stringify(payload),
@@ -49,4 +57,5 @@ export default class ExternalServices {
     return data;
   }
 }
+
 

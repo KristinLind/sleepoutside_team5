@@ -1,5 +1,4 @@
 // /src/js/main.js
-
 import ExternalServices from "./ExternalServices.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 import { normalizePublicImage, loadHeaderFooter } from "./utils.mjs";
