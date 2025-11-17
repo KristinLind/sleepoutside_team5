@@ -1,7 +1,7 @@
 console.log("Product listing page loaded");
 
 // new week 3
-import ProductData from "./ProductData.mjs";
+import ProductData from "./ExternalServices.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 import { normalizePublicImage, loadHeaderFooter } from "./utils.mjs";
 import Alert from "./Alert.js";

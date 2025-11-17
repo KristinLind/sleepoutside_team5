@@ -1,6 +1,6 @@
 // /src/js/main.js
 
-import ProductData from "./ProductData.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 import { normalizePublicImage, loadHeaderFooter } from "./utils.mjs";
 import Alert from "./Alert.js";
@@ -22,7 +22,7 @@ async function loadTopProducts() {
   if (!list) return;
 
   try {
-    const dataSource = new ProductData();
+    const dataSource = new ExternalServices();
     const products = await dataSource.getData("tents");
 
     const wantedIds = ["880RR", "985RF", "985PR", "344YJ"];

@@ -1,47 +1,50 @@
 // checkout.js
-import { getLocalStorage, setLocalStorage, loadHeaderFooter } from "./utils.mjs";
-import { normalizeCartItems } from "./cartUtils.mjs";
+import { setLocalStorage, loadHeaderFooter } from "./utils.mjs"; 
+import CheckoutProcess from "./checkoutProcess.mjs";
+
 
 const CART_KEY = "so-cart";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // ✅ Inject header and footer
   await loadHeaderFooter();
 
-  let cartItems = getLocalStorage(CART_KEY) || [];
-  cartItems = normalizeCartItems(cartItems); // normalize before use
-  updateOrderSummary(cartItems);
+  // Instantiate the Checkout Process
+  const checkoutProcess = new CheckoutProcess(CART_KEY, ".order-summary");
+  checkoutProcess.init(); // Display initial subtotal
 
-  const form = document.getElementById("checkout-form");
-  form.addEventListener("submit", (e) => {
+  const form = document.getElementById("checkout-form"); 
+  // Optional: Update totals when the zip code changes.
+  const zipCodeInput = form.querySelector('#zipCode');
+  if (zipCodeInput) {
+    zipCodeInput.addEventListener('blur', () => {
+      if (zipCodeInput.value.trim() !== '') {
+        checkoutProcess.calculateOrderTotal();
+      }
+    });
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault(); 
+    // Basic form validation check
     if (!form.checkValidity()) {
-      e.preventDefault();
       alert("Please fill out all required fields.");
-    } else {
-      e.preventDefault();
-      alert("Order placed successfully!");
+      return;
+    }
 
-      // ✅ Save normalized items for confirmation page
-      sessionStorage.setItem("lastOrder", JSON.stringify(cartItems));
+    try {
+      // Call the checkout method
+      const orderResponse = await checkoutProcess.checkout(form);
 
-      // ✅ Clear cart after checkout
-      setLocalStorage(CART_KEY, []);
+      console.log("Server Response:", orderResponse);
 
-      // ✅ Redirect to confirmation page
-      window.location.href = "/checkout/confirmation.html";
+      // Added Success Logic:
+      setLocalStorage(CART_KEY, []); 
+      sessionStorage.setItem("lastOrder", JSON.stringify(orderResponse.Result)); // Save the response if needed for confirmation page
+      window.location.href = "/checkout/confirmation.html"; 
+      
+    } catch (error) {
+      // Handle server/network errors
+      alert("Order submission failed. See console for details.");
     }
   });
 });
-
-function updateOrderSummary(cartItems) {
-  const subtotal = cartItems.reduce((sum, item) => sum + item.Price * item.Qty, 0);
-  const tax = subtotal * 0.06;
-  const itemCount = cartItems.reduce((count, item) => count + item.Qty, 0);
-  const shipping = itemCount > 0 ? 10 + (itemCount - 1) * 2 : 0;
-  const total = subtotal + tax + shipping;
-
-  document.getElementById("summary-subtotal").textContent = subtotal.toFixed(2);
-  document.getElementById("summary-tax").textContent = tax.toFixed(2);
-  document.getElementById("summary-shipping").textContent = shipping.toFixed(2);
-  document.getElementById("summary-total").textContent = total.toFixed(2);
-}
