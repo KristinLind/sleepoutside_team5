@@ -1,5 +1,5 @@
 // /src/js/product.js
-import ProductData from "./ProductData.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 import ProductDetails from "./ProductDetails.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 import { loadHeaderFooter } from "./utils.mjs";
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
   
-  const dataSource = new ProductData();           // category handled inside
+  const dataSource = new ExternalServices();           // category handled inside
   const details = new ProductDetails(productID, dataSource);
   details.init();
 });

@@ -83,15 +83,46 @@ export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-// set a listener for both touchend and click (guard the element)
-export function setClick(selector, callback) {
-  const el = qs(selector);
-  if (!el) return;
-  el.addEventListener("touchend", (event) => {
-    event.preventDefault();
-    callback(event);
+// alert message
+export function alertMessage(message, scroll = true) {
+  const existingAlerts = document.querySelectorAll('.alert');
+  existingAlerts.forEach(alert => alert.remove());
+
+  // Create the alert container
+  const alertEl = document.createElement('div');
+  alertEl.classList.add('alert');
+
+  // Set content (example structure: message + close button)
+  alertEl.innerHTML = `
+    <p>${message}</p>
+    <span class="alert-close">X</span>
+  `;
+
+  // Add listener to close the alert
+  alertEl.addEventListener('click', function (e) {
+    // Check if the click target is the alert itself or the close span
+    if (e.target.classList.contains('alert-close') || e.target === this) {
+      this.remove();
+    }
   });
-  el.addEventListener("click", (event) => {
-    callback(event);
+
+  const main = document.querySelector('main');
+  main.prepend(alertEl);
+  if (scroll) {
+    window.scrollTo(0, 0);
+  }
+}
+
+export function setClick(selector, callback) {
+
+    const el = qs(selector);
+    if (!el) return;
+    el.addEventListener("touchend", (event) => {
+      event.preventDefault();
+      callback(event);
+    });
+    el.addEventListener("click", (event) => {
+      callback(event);
   });
 }
+

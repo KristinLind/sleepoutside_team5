@@ -1,7 +1,7 @@
 console.log("Product listing page loaded");
 
 // new week 3
-import ProductData from "./ProductData.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 import { normalizePublicImage, loadHeaderFooter } from "./utils.mjs";
 import Alert from "./Alert.js";
@@ -24,9 +24,9 @@ async function loadProducts() {
   const category = params.get("category") || "tents";
 
   try {
-    // ✅ Instantiate without category
-    const dataSource = new ProductData();
-    // ✅ Pass category into getData
+    // Instantiate without category
+    const dataSource = new ExternalServices();
+    // Pass category into getData
     const products = await dataSource.getData(category);
 
     if (!products || products.length === 0) {
@@ -57,7 +57,7 @@ function productCardTemplate(p) {
   const price = `$${final.toFixed(2)}`;
   const productHref = `../product_pages/index.html?product=${p.Id}`;
 
-  // ✅ normalizePublicImage now prepends baseURL for relative API paths
+  // normalizePublicImage now prepends baseURL for relative API paths
   const imgSrc = normalizePublicImage(p.Image || p.Images?.PrimaryLarge);
   const fallback = normalizePublicImage("images/tents/placeholder-320.jpg");
 

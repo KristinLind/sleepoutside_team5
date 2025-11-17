@@ -1,5 +1,4 @@
 <!-- checkout.html -->
-
 <!doctype html>
 <html lang="en">
 
@@ -18,26 +17,26 @@
       <h2>Review & Place Your Order</h2>
 
       <!-- Checkout Form -->
-      <form id="checkout-form">
+      <form id="checkout-form"> 
         <fieldset>
           <legend>Customer Information</legend>
-          <label>First Name <input type="text" name="firstName" required></label>
-          <label>Last Name <input type="text" name="lastName" required></label>
+                  <label>First Name <input type="text" name="fname" required></label>
+                  <label>Last Name <input type="text" name="lname" required></label>
         </fieldset>
 
         <fieldset>
           <legend>Address</legend>
-          <label>Street Address <input type="text" name="street" required></label>
-          <label>City <input type="text" name="city" required></label>
-          <label>State <input type="text" name="state" required></label>
-          <label>Zip Code <input type="text" name="zip" required></label>
+            <label>Street Address <input type="text" name="street" required></label>
+            <label>City <input type="text" name="city" required></label>
+            <label>State <input type="text" name="state" required></label>
+            <label>Zip Code <input type="text" name="zip" required id="zipCode"></label> 
         </fieldset>
 
         <fieldset>
           <legend>Payment</legend>
           <label>Credit Card Number <input type="text" name="cardNumber" required></label>
-          <label>Expiration Date <input type="text" name="expDate" required placeholder="MM/YY"></label>
-          <label>Security Code <input type="text" name="cvv" required></label>
+          <label>Expiration Date <input type="text" name="expiration" required placeholder="MM/YY"></label>
+          <label>Security Code <input type="text" name="code" required></label>
         </fieldset>
 
         <button type="submit">Complete Checkout</button>
@@ -46,10 +45,10 @@
       <!-- Order Summary -->
       <aside class="order-summary">
         <h3>Order Summary</h3>
-        <p>Subtotal: $<span id="summary-subtotal">0.00</span></p>
-        <p>Tax: $<span id="summary-tax">0.00</span></p>
-        <p>Shipping: $<span id="summary-shipping">0.00</span></p>
-        <p><strong>Total: $<span id="summary-total">0.00</span></strong></p>
+        <p>Subtotal: $<span id="subtotal">0.00</span></p>
+        <p>Tax: $<span id="tax">0.00</span></p>
+        <p>Shipping: $<span id="shipping">0.00</span></p>
+        <p><strong>Total: $<span id="orderTotal">0.00</span></strong></p>
       </aside>
     </section>
   </main>
