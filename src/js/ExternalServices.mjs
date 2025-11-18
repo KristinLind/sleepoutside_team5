@@ -1,4 +1,5 @@
 // src/js/ExternalServices.mjs
+
 const baseURL = import.meta.env.VITE_SERVER_URL;
 // Define the specific checkout endpoint
 const CHECKOUT_URL = `${baseURL}checkout`;
@@ -6,10 +7,13 @@ const CHECKOUT_URL = `${baseURL}checkout`;
 async function convertToJson(res) {
   const jsonResponse = await res.json();
   if (!res.ok) {
-    // if not ok, throw the custom eror structure.
-    throw { name: 'servicesError', message: jsonResponse };
+    console.error(`HTTP Error: ${res.status} ${res.statusText}`, jsonResponse);
+    throw {
+      name: 'servicesError',
+      message: jsonResponse.message || 'Unknown error occurred',
+      details: jsonResponse
+    };
   }
-  // if it is ok, return response
   return jsonResponse;
 }
 

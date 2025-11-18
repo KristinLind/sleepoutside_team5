@@ -1,3 +1,5 @@
+// CheckoutProcess.mjs file
+
 import { getLocalStorage } from "./utils.mjs";
 import { normalizeCartItems } from "./cartUtils.mjs";
 import ExternalServices from "./ExternalServices.mjs";
@@ -14,17 +16,15 @@ function formDataToJSON(formElement) {
   return convertedJSON;
 }
 
-// Helper function 2: Package items for the server (Step 6)
+// Helper function 2: Package items for the server
 function packageItems(items) {
-  // Convert the detailed cart items into the simple format required by the server
   return items.map((item) => ({
-    id: item.Id,
-    name: item.Name,
-    price: item.Price,
-    quantity: item.Qty,
+    id: item.id,        // ✅ lowercase keys
+    name: item.name,
+    price: item.price,
+    quantity: item.qty,
   }));
 }
-
 
 export default class CheckoutProcess {
   constructor(cartKey = CART_KEY, outputSelector = ".order-summary") {
@@ -34,7 +34,6 @@ export default class CheckoutProcess {
     this.outputSelector = outputSelector;
     this.services = new ExternalServices();
 
-    // Initialize properties for tracking totals
     this.itemTotal = 0;
     this.shipping = 0;
     this.tax = 0;
@@ -46,7 +45,7 @@ export default class CheckoutProcess {
   }
 
   calculateSubtotal() {
-    return this.cartItems.reduce((sum, item) => sum + item.Price * item.Qty, 0);
+    return this.cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
   }
 
   calculateAndDisplaySubtotal() {
@@ -57,10 +56,9 @@ export default class CheckoutProcess {
     }
   }
 
-  // 5. Calculate and display the full order totals
   calculateOrderTotal() {
     this.tax = this.itemTotal * 0.06;
-    const itemCount = this.cartItems.reduce((count, item) => count + item.Qty, 0);
+    const itemCount = this.cartItems.reduce((count, item) => count + item.qty, 0);
     this.shipping = itemCount > 0 ? 10 + (itemCount - 1) * 2 : 0;
     this.orderTotal = this.itemTotal + this.tax + this.shipping;
 
@@ -77,21 +75,15 @@ export default class CheckoutProcess {
     if (totalEl) totalEl.innerText = this.orderTotal.toFixed(2);
   }
 
-
-  // 6. Final Checkout Function
+  // ✅ Corrected Checkout Function
   async checkout(formElement) {
-    // 1. Ensure all final totals are calculated (including shipping/tax based on zip code input)
     this.calculateOrderTotal();
 
-    // 2. Convert form data to JSON object
     const formObject = formDataToJSON(formElement);
-
-    // 3. Prepare the order items list
     const items = packageItems(this.cartItems);
 
-    // 4. Combine all data into the server-required payload format
     const payload = {
-      // Form Data: Ensure these keys (fname, lname, etc.) match the server's requirements!
+      // ✅ Correct field names for backend
       fname: formObject.fname,
       lname: formObject.lname,
       street: formObject.street,
@@ -102,21 +94,21 @@ export default class CheckoutProcess {
       expiration: formObject.expiration,
       code: formObject.code,
 
-      // Calculated/Internal Data
       orderDate: new Date().toISOString(),
       items: items,
-      orderTotal: this.orderTotal.toFixed(2),
-      shipping: this.shipping,
-      tax: this.tax.toFixed(2),
+      orderTotal: parseFloat(this.orderTotal.toFixed(2)),
+      shipping: parseFloat(this.shipping.toFixed(2)),
+      tax: parseFloat(this.tax.toFixed(2)),
     };
 
-    // 5. Call the external service to submit the order
+    console.log("Checkout payload being sent:", payload);
+
     try {
       const response = await this.services.checkout(payload);
       return response;
     } catch (error) {
       console.error("Checkout Failed in CheckoutProcess:", error);
-      throw error; 
+      throw error;
     }
   }
 }
