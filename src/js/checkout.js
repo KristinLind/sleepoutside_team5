@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       sessionStorage.setItem("lastOrder", JSON.stringify(orderResponse));
 
       // ✅ Redirect to success page (correct folder path)
-      window.location.href = "/public/success.html";
+      window.location.href = "/success.html";
 
     } catch (error) {
       console.error("Checkout failed:", error);
