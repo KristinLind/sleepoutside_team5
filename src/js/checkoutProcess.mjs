@@ -42,6 +42,7 @@ export default class CheckoutProcess {
 
   init() {
     this.calculateAndDisplaySubtotal();
+    this.calculateOrderTotal();  
   }
 
   calculateSubtotal() {
