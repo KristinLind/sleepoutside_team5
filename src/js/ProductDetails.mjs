@@ -1,5 +1,5 @@
 // src/js/ProductDetails.mjs
-import { getLocalStorage, setLocalStorage, normalizePublicImage } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, normalizePublicImage, alertMessage } from "./utils.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 
 const CART_KEY = "so-cart";
@@ -35,16 +35,13 @@ export default class ProductDetails {
         this.product.ListPrice ??
         0,
 
-      // ✅ prefer the richer image fields
       Image:
         this.product.Images?.PrimaryMedium ||
         this.product.Images?.PrimaryLarge ||
         this.product.Image ||
         "",
 
-      // ✅ keep the full Images object
       Images: this.product.Images ?? {},
-
       Color: this.product?.Colors?.[0]?.ColorName ?? "",
       Qty: 1,
     };
@@ -59,6 +56,9 @@ export default class ProductDetails {
 
     setLocalStorage(CART_KEY, cart);
     updateCartCount();
+
+    // ✅ Show feedback
+    alertMessage(`${item.Name} was added to your cart!`);
   }
 
   renderProductDetails() {
