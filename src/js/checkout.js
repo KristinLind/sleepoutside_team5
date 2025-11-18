@@ -1,19 +1,18 @@
 // checkout.js
-import { setLocalStorage, loadHeaderFooter, alertMessage } from "./utils.mjs"; 
-import CheckoutProcess from "./checkoutProcess.mjs";
 
+import { loadHeaderFooter, alertMessage } from "./utils.mjs";
+import CheckoutProcess from "./checkoutProcess.mjs";
 
 const CART_KEY = "so-cart";
 
 document.addEventListener("DOMContentLoaded", async () => {
   await loadHeaderFooter();
 
-  // Instantiate the Checkout Process
   const checkoutProcess = new CheckoutProcess(CART_KEY, ".order-summary");
-  checkoutProcess.init(); // Display initial subtotal
+  checkoutProcess.init();
 
-  const form = document.getElementById("checkout-form"); 
-  // Optional: Update totals when the zip code changes.
+  const form = document.getElementById("checkout-form");
+
   const zipCodeInput = form.querySelector('#zipCode');
   if (zipCodeInput) {
     zipCodeInput.addEventListener('blur', () => {
@@ -24,34 +23,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   form.addEventListener("submit", async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
-    const form = document.getElementById("checkout-form");
     if (!form.checkValidity()) {
-      form.reportValidity(); 
-      return; 
+      form.reportValidity();
+      return;
     }
 
     try {
-      // Call the checkout method
       const orderResponse = await checkoutProcess.checkout(form);
-
       console.log("Server Response:", orderResponse);
 
-      // Added Success Logic:
-      setLocalStorage(CART_KEY, []); 
-      sessionStorage.setItem("lastOrder", JSON.stringify(orderResponse.Result));
-      window.location.href = "/checkout/confirmation.html"; 
+      // Clear cart
+      localStorage.removeItem(CART_KEY);
+
+      // Save last order
+      sessionStorage.setItem("lastOrder", JSON.stringify(orderResponse));
+
+      // ✅ Redirect to success page (correct folder path)
+      window.location.href = "/checkout/success.html";
 
     } catch (error) {
-      console.error("Checkout failed:", error); // Log the error object
+      console.error("Checkout failed:", error);
 
-      if (error.name === 'servicesError' && error.message && error.message.message) {
-        // Extract the specific message from the server
-        const serverMessage = error.message.message;
-        alertMessage(`Order submission failed: ${serverMessage}`, true);
+      if (error.name === 'servicesError') {
+        alertMessage(`Order submission failed: ${error.message}`, true);
       } else {
-        // Fallback for network errors or unhandled error types
         alertMessage("An unknown error occurred during checkout. Please try again.");
       }
     }
