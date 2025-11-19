@@ -1,9 +1,3 @@
-
-import ProductData from './ProductData.mjs';
-import ProductList from './productList.mjs';
-
-const dataSource = new ProductData('tents');
-
 // /src/js/main.js
 import ExternalServices from "./ExternalServices.mjs";
 import { updateCartCount } from "./cartCount.mjs";
@@ -44,7 +38,7 @@ async function loadTopProducts() {
       .map(p => productCardTemplate(p, "tents"))
       .join("");
   } catch (err) {
-    console.error("Error loading top products:", err);
+    // console.error("Error loading top products:", err);
     list.innerHTML = "<li>Failed to load products.</li>";
   }
 }
