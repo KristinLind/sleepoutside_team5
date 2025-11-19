@@ -102,14 +102,6 @@ export default class CheckoutProcess {
       tax: parseFloat(this.tax.toFixed(2)),
     };
 
-    console.log("Checkout payload being sent:", payload);
-
-    try {
-      const response = await this.services.checkout(payload);
-      return response;
-    } catch (error) {
-      console.error("Checkout Failed in CheckoutProcess:", error);
-      throw error;
-    }
+    return await this.services.checkout(payload);
   }
 }
