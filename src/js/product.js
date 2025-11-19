@@ -1,15 +1,23 @@
-import ProductData from "./ProductData.mjs";
+// /src/js/product.js
+import ExternalServices from "./ExternalServices.mjs";
 import ProductDetails from "./ProductDetails.mjs";
 import { updateCartCount } from "./cartCount.mjs";
-
+import { loadHeaderFooter } from "./utils.mjs";
 
 document.addEventListener("DOMContentLoaded", async () => {
+  await loadHeaderFooter();
+
   updateCartCount();
 
-  const productID = new URLSearchParams(window.location.search).get("product");
-  if (!productID) return;
+  const params = new URLSearchParams(window.location.search);
+  const productID = params.get("product");
 
-  const dataSource = new ProductData("tents");
+  if (!productID) {
+    console.error("No product ID found in URL");
+    return;
+  }
+  
+  const dataSource = new ExternalServices();           // category handled inside
   const details = new ProductDetails(productID, dataSource);
   details.init();
 });

@@ -2,60 +2,68 @@
 export function normalizePublicImage(p) {
   const raw = String(p || "").trim();
   if (!raw) return "";
-  if (/^https?:\/\//i.test(raw)) return raw; 
-  return raw.startsWith("/") ? raw : `/${raw}`; 
+
+  if (/^https?:\/\//i.test(raw)) return raw;
+
+  const cleaned = raw
+    .replace(/^(\.\.\/)+/, "")  // strip any ../ at the start
+    .replace(/^\.\/+/, "")      // strip any ./ at the start
+    .replace(/^\/+/, "");       // strip leading slashes
+
+  return `/${cleaned}`;
 }
+
 // Asynchronous Fetch
 export async function loadTemplate(path) {
   const res = await fetch(path);
   if (!res.ok) {
-    throw new Error(`Failed to load template from ${path}: Status ${res.status}`);
+    throw new Error(
+      `Failed to load template from ${path}: Status ${res.status}`
+    );
   }
   const template = await res.text();
   return template;
 }
-//export template
+
+// render template into a parent element
 export function renderWithTemplate(template, parentElement, data, callback) {
   parentElement.innerHTML = template;
-  // Check for and execute the optional callback function
   if (callback) {
     callback(data);
   }
 }
 
-//export async function HeaderFooter
+// load header and footer partials
 export async function loadHeaderFooter() {
-  // Define paths to the partials
-  const headerPath = '/partials/header.html';
-  const footerPath = '/partials/footer.html';
+  const headerPath = "/partials/header.html";
+  const footerPath = "/partials/footer.html";
 
-  // Load the templates concurrently (optional, but good practice)
+  // Load the templates concurrently
   const [headerTemplate, footerTemplate] = await Promise.all([
     loadTemplate(headerPath),
-    loadTemplate(footerPath)
+    loadTemplate(footerPath),
   ]);
 
-  // Grab the placeholder elements from the DOM
   const headerElement = document.querySelector("#main-header");
   const footerElement = document.querySelector("#main-footer");
 
-  // Render the templates. Header requires no data or callback here.
   if (headerElement) {
     renderWithTemplate(headerTemplate, headerElement);
   }
 
-  // Render the footer. Footer requires no data or callback here.
   if (footerElement) {
     renderWithTemplate(footerTemplate, footerElement);
   }
+
+  return true;
 }
 
-// wrapper for querySelector...returns matching element
+// wrapper for querySelector
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
 }
 
-// retrieve data from localStorage (always returns an array for cart safety)
+// retrieve data from localStorage
 export function getLocalStorage(key) {
   const raw = localStorage.getItem(key);
   if (!raw) return [];
@@ -64,7 +72,6 @@ export function getLocalStorage(key) {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    // eslint-disable-next-line no-console
     console.error(`Error parsing localStorage key: ${key}`);
     return [];
   }
@@ -72,20 +79,50 @@ export function getLocalStorage(key) {
 
 // save data to localStorage
 export function setLocalStorage(key, data) {
-  // eslint-disable-next-line no-console
-  console.log('[setLocalStorage]', key, { isArray: Array.isArray(data), data });
+  console.log("[setLocalStorage]", key, { isArray: Array.isArray(data), data });
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-// set a listener for both touchend and click (guard the element)
-export function setClick(selector, callback) {
-  const el = qs(selector);
-  if (!el) return;
-  el.addEventListener("touchend", (event) => {
-    event.preventDefault();
-    callback(event);
+// alert message
+export function alertMessage(message, scroll = true) {
+  const existingAlerts = document.querySelectorAll('.alert');
+  existingAlerts.forEach(alert => alert.remove());
+
+  // Create the alert container
+  const alertEl = document.createElement('div');
+  alertEl.classList.add('alert');
+
+  // Set content (example structure: message + close button)
+  alertEl.innerHTML = `
+    <p>${message}</p>
+    <span class="alert-close">X</span>
+  `;
+
+  // Add listener to close the alert
+  alertEl.addEventListener('click', function (e) {
+    // Check if the click target is the alert itself or the close span
+    if (e.target.classList.contains('alert-close') || e.target === this) {
+      this.remove();
+    }
   });
-  el.addEventListener("click", (event) => {
-    callback(event);
+
+  const main = document.querySelector('main');
+  main.prepend(alertEl);
+  if (scroll) {
+    window.scrollTo(0, 0);
+  }
+}
+
+export function setClick(selector, callback) {
+
+    const el = qs(selector);
+    if (!el) return;
+    el.addEventListener("touchend", (event) => {
+      event.preventDefault();
+      callback(event);
+    });
+    el.addEventListener("click", (event) => {
+      callback(event);
   });
 }
+

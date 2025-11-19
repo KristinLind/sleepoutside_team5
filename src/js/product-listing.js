@@ -1,12 +1,7 @@
-// src/js/product-listing.js
-
 console.log("Product listing page loaded");
 
-
-
-
-//new week 3 
-import ProductData from "./ProductData.mjs";
+// new week 3
+import ExternalServices from "./ExternalServices.mjs";
 import { updateCartCount } from "./cartCount.mjs";
 import { normalizePublicImage, loadHeaderFooter } from "./utils.mjs";
 import Alert from "./Alert.js";
@@ -29,11 +24,18 @@ async function loadProducts() {
   const category = params.get("category") || "tents";
 
   try {
-    const dataSource = new ProductData(category);
-    const products = await dataSource.getData();
+    // Instantiate without category
+    const dataSource = new ExternalServices();
+    // Pass category into getData
+    const products = await dataSource.getData(category);
+
+    if (!products || products.length === 0) {
+      list.innerHTML = `<li>No products found for "${category}".</li>`;
+      return;
+    }
 
     const display = products
-      .filter(p => !!p.Image)
+      .filter(p => !!(p.Image || p.Images?.PrimaryLarge))
       .map(productCardTemplate)
       .join("");
 
@@ -54,7 +56,9 @@ function productCardTemplate(p) {
 
   const price = `$${final.toFixed(2)}`;
   const productHref = `../product_pages/index.html?product=${p.Id}`;
-  const imgSrc = normalizePublicImage(p.Image);
+
+  // normalizePublicImage now prepends baseURL for relative API paths
+  const imgSrc = normalizePublicImage(p.Image || p.Images?.PrimaryLarge);
   const fallback = normalizePublicImage("images/tents/placeholder-320.jpg");
 
   return `
@@ -73,4 +77,3 @@ function productCardTemplate(p) {
     </li>
   `;
 }
-

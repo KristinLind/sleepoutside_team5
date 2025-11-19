@@ -1,5 +1,5 @@
 // /src/js/home.js
-import ProductData from "./ProductData.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 
 function productCardTemplate(p) {
   const price = Number.isFinite(+p.FinalPrice) ? `$${(+p.FinalPrice).toFixed(2)}` : p.FinalPrice;
@@ -20,7 +20,7 @@ async function init() {
   const listEl = document.querySelector(".product-list");
   if (!listEl) return;
 
-  const ds = new ProductData("tents");
+  const ds = new ExternalServices("tents");
   const products = await ds.getData();
   listEl.innerHTML = products.map(productCardTemplate).join("");
 }
