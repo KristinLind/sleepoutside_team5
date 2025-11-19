@@ -7,10 +7,9 @@ const CHECKOUT_URL = `${baseURL}checkout`;
 async function convertToJson(res) {
   const jsonResponse = await res.json();
   if (!res.ok) {
-    console.error(`HTTP Error: ${res.status} ${res.statusText}`, jsonResponse);
     throw {
-      name: 'servicesError',
-      message: jsonResponse.message || 'Unknown error occurred',
+      name: "servicesError",
+      message: jsonResponse.message || "Unknown error occurred",
       details: jsonResponse
     };
   }
