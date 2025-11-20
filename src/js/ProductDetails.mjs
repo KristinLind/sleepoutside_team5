@@ -1,6 +1,6 @@
 // src/js/ProductDetails.mjs
 import { getLocalStorage, setLocalStorage, normalizePublicImage, alertMessage } from "./utils.mjs";
-import { updateCartCount } from "./cartCount.mjs";
+import { updateCartCount, animateCartIcon } from "./cartCount.mjs";
 
 const CART_KEY = "so-cart";
 
@@ -57,7 +57,9 @@ export default class ProductDetails {
     setLocalStorage(CART_KEY, cart);
     updateCartCount();
 
-    // ✅ Show feedback
+    animateCartIcon();
+
+    // Show feedback
     alertMessage(`${item.Name} was added to your cart!`);
   }
 
