@@ -83,46 +83,37 @@ export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-// alert message
+// 1. alert message
 export function alertMessage(message, scroll = true) {
-  const existingAlerts = document.querySelectorAll('.alert');
-  existingAlerts.forEach(alert => alert.remove());
+  const alert = document.createElement('div');
+  alert.classList.add('alert');
 
-  // Create the alert container
-  const alertEl = document.createElement('div');
-  alertEl.classList.add('alert');
+  // 2. Set the content: message and a close 'X' button
+  alert.innerHTML = `<p>${message}</p><span class="close-alert">X</span>`;
 
-  // Set content (example structure: message + close button)
-  alertEl.innerHTML = `
-    <p>${message}</p>
-    <span class="alert-close">X</span>
-  `;
-
-  // Add listener to close the alert
-  alertEl.addEventListener('click', function (e) {
-    // Check if the click target is the alert itself or the close span
-    if (e.target.classList.contains('alert-close') || e.target === this) {
+  // 3. Add a listener to remove the alert when 'X' is clicked
+  alert.addEventListener('click', function (e) {
+    if (e.target.classList.contains('close-alert')) {
+      // Remove the alert element itself
       this.remove();
     }
   });
 
+  // 4. Get the main element
   const main = document.querySelector('main');
-  main.prepend(alertEl);
+
+  // Optional: Remove any previous alert messages to prevent stacking
+  const existingAlert = main.querySelector('.alert');
+  if (existingAlert) {
+    main.removeChild(existingAlert);
+  }
+
+  // 5. Add the new alert to the top of main
+  main.prepend(alert);
+
+  // 6. Scroll to the top if requested
   if (scroll) {
     window.scrollTo(0, 0);
   }
-}
-
-export function setClick(selector, callback) {
-
-    const el = qs(selector);
-    if (!el) return;
-    el.addEventListener("touchend", (event) => {
-      event.preventDefault();
-      callback(event);
-    });
-    el.addEventListener("click", (event) => {
-      callback(event);
-  });
 }
 
