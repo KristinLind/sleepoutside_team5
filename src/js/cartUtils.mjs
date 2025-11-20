@@ -6,7 +6,7 @@ export function normalizeCartItems(cartItems = []) {
     price: Number(item.Price ?? item.FinalPrice ?? item.ListPrice ?? item.price ?? 0),
     qty: Number(item.Qty ?? item.qty ?? 1),
     image:
-      // ✅ Handle all JSON variations
+      // Handle all JSON variations
       item.Image ||
       item.PrimaryMedium ||
       item.PrimaryLarge ||

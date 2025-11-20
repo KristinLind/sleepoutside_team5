@@ -51,7 +51,7 @@ function renderCartContents() {
   }
   cartItems = Array.isArray(cartItems) ? cartItems : [];
 
-  // ✅ Normalize once here
+  // Normalize once here
   cartItems = normalizeCartItems(cartItems);
 
   if (cartItems.length === 0) {
@@ -76,7 +76,7 @@ function onCartClick(e) {
   const id = e.target.dataset.id;
   let cartItems = getLocalStorage(CART_KEY) || [];
 
-  // ✅ Normalize before modifying
+  // Normalize before modifying
   cartItems = normalizeCartItems(cartItems);
 
   const itemIndex = cartItems.findIndex(item => String(item.id) === String(id));
