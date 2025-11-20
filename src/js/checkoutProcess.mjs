@@ -1,4 +1,4 @@
-// CheckoutProcess.mjs file
+// checkoutProcess.mjs file
 
 import { getLocalStorage } from "./utils.mjs";
 import { normalizeCartItems } from "./cartUtils.mjs";
@@ -19,7 +19,7 @@ function formDataToJSON(formElement) {
 // Helper function 2: Package items for the server
 function packageItems(items) {
   return items.map((item) => ({
-    id: item.id,        // ✅ lowercase keys
+    id: item.id,       
     name: item.name,
     price: item.price,
     quantity: item.qty,
@@ -76,7 +76,7 @@ export default class CheckoutProcess {
     if (totalEl) totalEl.innerText = this.orderTotal.toFixed(2);
   }
 
-  // ✅ Corrected Checkout Function
+  // Corrected Checkout Function
   async checkout(formElement) {
     this.calculateOrderTotal();
 
@@ -84,7 +84,7 @@ export default class CheckoutProcess {
     const items = packageItems(this.cartItems);
 
     const payload = {
-      // ✅ Correct field names for backend
+      // Correct field names for backend
       fname: formObject.fname,
       lname: formObject.lname,
       street: formObject.street,

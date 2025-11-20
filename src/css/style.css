@@ -165,8 +165,6 @@ button:hover {
   border-bottom: 3px solid var(--primary-color);
 }
 
-/* End utility classes */
-
 /* Cart icon styles */
 .cart a.cart-link {
   display: inline-block;
@@ -184,8 +182,6 @@ button:hover {
 .cart:hover svg {
   fill: gray;
 }
-
-/* End cart icon styles */
 
 /* Cart count badge */
 .cart a.cart-link {
@@ -300,8 +296,6 @@ button:hover {
 .card__name {
   font-size: 1em;
 }
-
-/* End product list card */
 
 .product-detail {
   padding: 1em;
@@ -601,4 +595,38 @@ main h3 {
 .order-summary strong {
   font-size: 1.1rem;
   color: #000;
+}
+
+/* --- Styles for Custom Erro Alert Message --- */
+.alert {
+  position: relative;
+  padding: 15px, 40px, 15px, 15px;
+  margin: 15px 0;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  font-size: 0.95em;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.alert .close-alert {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.2em;
+  font-weight: bold;
+  opacity: 0.8;
+}
+.alert .close-alert:hover {
+  opacity: 1;
+}
+.alert p {
+  margin: 0;
+}
+.alert br {
+  content: '';
+  margin: 0;
 }
