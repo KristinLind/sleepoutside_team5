@@ -38,7 +38,7 @@ async function loadTopProducts() {
       .map(p => productCardTemplate(p, "tents"))
       .join("");
   } catch (err) {
-    console.error("Error loading top products:", err);
+    // console.error("Error loading top products:", err);
     list.innerHTML = "<li>Failed to load products.</li>";
   }
 }
@@ -95,3 +95,6 @@ function productCardTemplate(p, category = "tents") {
     </li>
   `;
 }
+
+
+
